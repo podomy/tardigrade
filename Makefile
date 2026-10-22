@@ -630,7 +630,7 @@ $(LIBEDIT_DIR)/Makefile: $(C_DEPS_DIR)/libedit-rebuild $(LIBEDIT_SRC_DIR)/config
 # TODO(benesch): make it possible to build libroach without CCL code. Because
 # libroach and libroachccl are defined in the same CMake project, CMake requires
 # that the CCL code be present even if only the OSS target will be built.
-$(LIBROACH_DIR)/Makefile: $(C_DEPS_DIR)/libroach-rebuild | bin/.submodules-initialized bin/.cpp_protobuf_sources bin/.cpp_ccl_protobuf_sources
+$(LIBROACH_DIR)/Makefile: $(C_DEPS_DIR)/libroach-rebuild | bin/.submodules-initialized bin/.cpp_protobuf_sources
 	rm -rf $(LIBROACH_DIR)
 	mkdir -p $(LIBROACH_DIR)
 	@# NOTE: If you change the CMake flags below, bump the version in
@@ -765,7 +765,7 @@ SQLPARSER_TARGETS = \
 	pkg/sql/lex/keywords.go \
 	pkg/sql/lex/reserved_keywords.go
 
-PROTOBUF_TARGETS := bin/.go_protobuf_sources bin/.gw_protobuf_sources bin/.cpp_protobuf_sources bin/.cpp_ccl_protobuf_sources
+PROTOBUF_TARGETS := bin/.go_protobuf_sources bin/.gw_protobuf_sources bin/.cpp_protobuf_sources
 
 DOCGEN_TARGETS := bin/.docgen_bnfs bin/.docgen_functions
 
@@ -1118,7 +1118,6 @@ ifneq ($(GIT_DIR),)
 endif
 
 CPP_PROTO_ROOT := $(LIBROACH_SRC_DIR)/protos
-CPP_PROTO_CCL_ROOT := $(LIBROACH_SRC_DIR)/protosccl
 
 GOGO_PROTOBUF_PATH := ./vendor/github.com/gogo/protobuf
 PROTOBUF_PATH  := $(GOGO_PROTOBUF_PATH)/protobuf
@@ -1152,10 +1151,6 @@ GO_SOURCES := $(GO_PROTOS:%.proto=%.pb.go)
 CPP_PROTOS := $(filter %/roachpb/metadata.proto %/roachpb/data.proto %/roachpb/internal.proto %/roachpb/errors.proto %/roachpb/api.proto %util/tracing/recorded_span.proto %/engine/enginepb/mvcc.proto %/engine/enginepb/mvcc3.proto %/engine/enginepb/file_registry.proto %/engine/enginepb/rocksdb.proto %/hlc/legacy_timestamp.proto %/hlc/timestamp.proto %/log/log.proto %/unresolved_addr.proto,$(GO_PROTOS))
 CPP_HEADERS := $(subst ./pkg,$(CPP_PROTO_ROOT),$(CPP_PROTOS:%.proto=%.pb.h))
 CPP_SOURCES := $(subst ./pkg,$(CPP_PROTO_ROOT),$(CPP_PROTOS:%.proto=%.pb.cc))
-
-CPP_PROTOS_CCL := $(filter %/ccl/baseccl/encryption_options.proto %/ccl/storageccl/engineccl/enginepbccl/key_registry.proto %/ccl/storageccl/engineccl/enginepbccl/stats.proto,$(GO_PROTOS))
-CPP_HEADERS_CCL := $(subst ./pkg,$(CPP_PROTO_CCL_ROOT),$(CPP_PROTOS_CCL:%.proto=%.pb.h))
-CPP_SOURCES_CCL := $(subst ./pkg,$(CPP_PROTO_CCL_ROOT),$(CPP_PROTOS_CCL:%.proto=%.pb.cc))
 
 $(GOGOPROTO_PROTO): bin/.submodules-initialized
 $(ERRORS_PROTO): bin/.submodules-initialized
@@ -1194,22 +1189,6 @@ bin/.cpp_protobuf_sources: $(PROTOC) $(CPP_PROTOS)
 	build/werror.sh $(PROTOC) -Ipkg:$(GOGO_PROTOBUF_PATH):$(PROTOBUF_PATH) --cpp_out=lite:$(CPP_PROTO_ROOT) $(CPP_PROTOS)
 	$(SED_INPLACE) -E '/gogoproto/d' $(CPP_HEADERS) $(CPP_SOURCES)
 	touch $@
-
-bin/.cpp_ccl_protobuf_sources: $(PROTOC) $(CPP_PROTOS_CCL)
-	rm -rf $(CPP_PROTO_CCL_ROOT)
-	mkdir -p $(CPP_PROTO_CCL_ROOT)
-	build/werror.sh $(PROTOC) -Ipkg:$(GOGO_PROTOBUF_PATH):$(PROTOBUF_PATH) --cpp_out=lite:$(CPP_PROTO_CCL_ROOT) $(CPP_PROTOS_CCL)
-	$(SED_INPLACE) -E '/gogoproto/d' $(CPP_HEADERS_CCL) $(CPP_SOURCES_CCL)
-	touch $@
-
-# The next two rules must be kept exactly the same except the CCL one depends
-# on one additional proto. They generate the pbjs files from the protobuf
-# definitions, which then act is inputs to the pbts compiler, which creates
-# typescript definitions for the proto files afterwards.
-
-
-
-
 
 .SECONDARY: pkg/sql/parser/gen/sql.go.tmp
 pkg/sql/parser/gen/sql.go.tmp: pkg/sql/parser/gen/sql-gen.y bin/.bootstrap
