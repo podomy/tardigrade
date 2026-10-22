@@ -30,12 +30,24 @@ jobs:
             -u "$(id -u):$(id -g)" \
             cockroachdb/builder:20191029-105705 make buildoss
 
+      - name: Inspect linkage
+        run: ldd ./cockroachoss || true
+
       - name: Smoke test
+        # Runs inside the builder image: it has the period libraries
+        # (e.g. libncurses5) the binary links against.
         run: |
-          ./cockroachoss version
-          ./cockroachoss start-single-node --insecure --background --store=path=/tmp/cockroach-data
-          ./cockroachoss sql --insecure --execute="CREATE DATABASE smoketest; CREATE TABLE smoketest.kv (k INT PRIMARY KEY, v STRING); INSERT INTO smoketest.kv VALUES (1, 'tardigrade'); SELECT * FROM smoketest.kv;"
-          ./cockroachoss quit --insecure
+          docker run --rm \
+            -v "${{ github.workspace }}:/go/src/github.com/podomy/tardigrade" \
+            -v "${{ github.workspace }}/build/builder_home:/home/roach" \
+            -w /go/src/github.com/podomy/tardigrade \
+            -e GOPATH=/go -e HOME=/home/roach \
+            -u "$(id -u):$(id -g)" \
+            cockroachdb/builder:20191029-105705 sh -c '
+              ./cockroachoss version &&
+              ./cockroachoss start-single-node --insecure --background --store=path=/tmp/cockroach-data &&
+              ./cockroachoss sql --insecure --execute="CREATE DATABASE smoketest; CREATE TABLE smoketest.kv (k INT PRIMARY KEY, v STRING); INSERT INTO smoketest.kv VALUES (1, '"'"'tardigrade'"'"'); SELECT * FROM smoketest.kv;" &&
+              ./cockroachoss quit --insecure'
 
       - uses: actions/upload-artifact@v4
         if: always()
