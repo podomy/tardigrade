@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./assets/logo.png" alt="Tardigrade" width="45%">
+  <img src="./assets/logo.png" alt="Tardigrade" width="30%">
 </p>
 
 <h1 align="center">Tardigrade</h1>
