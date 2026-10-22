@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- Web UI removed: `pkg/ui` is now only the stub handler
+  (`Binary built without web UI.`), the `cockroach-oss` binary no
+  longer links web assets, and all UI build targets (webpack, karma,
+  yarn, bindata) are gone from the Makefile. Admin/status/health APIs
+  are unchanged.
+
 ## v1.1.1 (2026-10-22)
 
 - Fork established from CockroachDB `release-19.2` at e9e3265.

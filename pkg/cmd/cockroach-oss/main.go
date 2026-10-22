@@ -14,7 +14,6 @@ package main
 
 import (
 	"github.com/podomy/tardigrade/pkg/cli"
-	_ "github.com/podomy/tardigrade/pkg/ui/distoss" // web UI init hooks
 )
 
 func main() {
