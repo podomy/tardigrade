@@ -6,8 +6,10 @@
 # UI:   http://localhost:8080
 services:
   tardigrade:
-    build: .
-    image: tardigrade:19.2
+    # Published by the build workflow to ghcr.io (see .github/workflows).
+    # To build locally instead, replace `image:` with `build: .`
+    # (requires ./cockroachoss from `make buildoss` in the context).
+    image: ghcr.io/podomy/tardigrade:latest
     command: ["start-single-node", "--insecure", "--advertise-addr=tardigrade"]
     ports:
       - "26257:26257"
