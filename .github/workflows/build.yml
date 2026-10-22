@@ -19,8 +19,12 @@ jobs:
 
       - name: Build OSS binary
         run: |
+          # The builder image runs as our UID and needs a writable home
+          # (Go build cache, yarn cache), mirroring build/builder.sh.
+          mkdir -p build/builder_home/.cache build/builder_home/.yarn-cache
           docker run --rm \
             -v "${{ github.workspace }}:/go/src/github.com/podomy/tardigrade" \
+            -v "${{ github.workspace }}/build/builder_home:/home/roach" \
             -w /go/src/github.com/podomy/tardigrade \
             -e GOPATH=/go \
             -u "$(id -u):$(id -g)" \
