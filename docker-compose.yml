@@ -1,0 +1,19 @@
+# Single-node Tardigrade for local development.
+#
+#   make buildoss && docker compose up --build
+#
+# SQL:  postgres://root@localhost:26257?sslmode=disable
+# UI:   http://localhost:8080
+services:
+  tardigrade:
+    build: .
+    image: tardigrade:19.2
+    command: ["start-single-node", "--insecure", "--advertise-addr=tardigrade"]
+    ports:
+      - "26257:26257"
+      - "8080:8080"
+    volumes:
+      - tardigrade-data:/cockroach/cockroach-data
+
+volumes:
+  tardigrade-data:

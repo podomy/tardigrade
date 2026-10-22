@@ -1,0 +1,40 @@
+name: build
+
+# Builds the OSS binary the same way the Makefile documents: inside the
+# period builder image (Go 1.12, node/yarn, cmake, gcc of the era), with
+# the tree mounted at the GOPATH path the Makefile enforces.
+on:
+  push:
+    branches: [tardigrade-main, release-19.2]
+  workflow_dispatch:
+
+jobs:
+  buildoss:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 1
+
+      - name: Build OSS binary
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}:/go/src/github.com/podomy/tardigrade" \
+            -w /go/src/github.com/podomy/tardigrade \
+            -e GOPATH=/go \
+            -u "$(id -u):$(id -g)" \
+            cockroachdb/builder:20191029-105705 make buildoss
+
+      - name: Smoke test
+        run: |
+          ./cockroachoss version
+          ./cockroachoss start-single-node --insecure --background --store=path=/tmp/cockroach-data
+          ./cockroachoss sql --insecure --execute="CREATE DATABASE smoketest; CREATE TABLE smoketest.kv (k INT PRIMARY KEY, v STRING); INSERT INTO smoketest.kv VALUES (1, 'tardigrade'); SELECT * FROM smoketest.kv;"
+          ./cockroachoss quit --insecure
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tardigrade-oss
+          path: cockroachoss
