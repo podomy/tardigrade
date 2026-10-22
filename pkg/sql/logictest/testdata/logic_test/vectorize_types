@@ -1,0 +1,131 @@
+# LogicTest: local-vec
+
+# Check that all types supported by the vectorized engine can be read correctly.
+statement ok
+CREATE TABLE all_types (
+    _bool      BOOL,
+    _bytes     BYTES,
+    _date      DATE,
+    _decimal   DECIMAL,
+    _int2      INT2,
+    _int4      INT4,
+    _int       INT8,
+    _oid       OID,
+    _float     FLOAT8,
+    _string    STRING,
+    _uuid      UUID,
+    _timestamp TIMESTAMP
+)
+
+statement ok
+INSERT
+  INTO all_types
+VALUES (
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL
+       ),
+       (
+       false,
+       '123',
+       '2019-10-22',
+       1.23,
+       123,
+       123,
+       123,
+       123,
+       1.23,
+       '123',
+       '63616665-6630-3064-6465-616462656562',
+       '1-1-18 1:00:00.001'
+       )
+
+query BTTRIIIORTTT
+SELECT * FROM all_types ORDER BY 1
+----
+NULL   NULL  NULL                             NULL  NULL  NULL  NULL  NULL  NULL  NULL  NULL                                  NULL
+false  123   2019-10-22 00:00:00 +0000 +0000  1.23  123   123   123   123   1.23  123   63616665-6630-3064-6465-616462656562  2001-01-18 01:00:00.001 +0000 +0000
+
+statement ok
+CREATE TABLE skip_unneeded_cols (
+  _id UUID,
+  _id2 INT8,
+  _float FLOAT8,
+  _unsupported1 INT ARRAY,
+  _bool BOOL,
+  _unsupported2 INT ARRAY,
+  _bool2 BOOL,
+  PRIMARY KEY(_id, _id2)
+)
+
+statement ok
+INSERT INTO skip_unneeded_cols VALUES ('63616665-6630-3064-6465-616462656562', 1, '1.2', NULL, true, NULL, false)
+
+statement ok
+SET vectorize=experimental_always
+
+statement error pq: unable to vectorize execution plan: unhandled type int\[\]
+SELECT _unsupported1 FROM skip_unneeded_cols
+
+query IBB
+SELECT _id2, _bool, _bool2 FROM skip_unneeded_cols
+----
+1 true false
+
+statement ok
+RESET vectorize
+
+# This query uses a builtin that returns currently unsupported type
+# (TimestampTZ). We're only interested in not getting an error. See #42871.
+statement ok
+SELECT experimental_strptime(_string, _string) IS NULL FROM all_types
+
+statement ok
+CREATE TABLE unsupported_type (id INT PRIMARY KEY, unsupported INT ARRAY)
+
+statement ok
+INSERT INTO unsupported_type (id) SELECT * FROM generate_series(1, 2000)
+
+statement ok
+SET vectorize=experimental_always
+
+# This query makes sure that CFetcher when reading from a table with an
+# unhandled type (that isn't needed) is reset correctly between batches.
+statement ok
+SELECT id FROM unsupported_type LIMIT 1 OFFSET 1100
+
+statement ok
+RESET vectorize
+
+# Regression test for #44904 (mismatched physical types between materializer's
+# input and output, root of the problem is outside of the vectorized engine).
+# We should fallback to the row-by-row engine.
+statement ok
+SET default_int_size = 4; CREATE TABLE t44904(c0 INT); INSERT INTO t44904 VALUES(0)
+
+query I
+SELECT CAST(0 BETWEEN(CASE NULL WHEN c0 = 0 THEN NULL END) AND 0 IS TRUE AS INT) FROM t44904
+----
+0
+
+# Regression test for #45038 (mismatched physical types between expected and
+# actual physical types when wrapping unsupported processor cores).
+statement ok
+CREATE TABLE t45038(c0 INT); INSERT INTO t45038 VALUES(NULL)
+
+query R
+SELECT sum(c) FROM (SELECT CAST((IF(IF(false, false, c0 IS NULL), NULL, NULL)) BETWEEN 0 AND 0 IS TRUE AS INT) c FROM t45038)
+----
+0
+
+statement ok
+RESET default_int_size

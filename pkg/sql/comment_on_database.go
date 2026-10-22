@@ -1,0 +1,95 @@
+// Copyright 2018 The Cockroach Authors.
+//
+// Use of this software is governed by the Business Source License
+// included in the file licenses/BSL.txt.
+//
+// As of the Change Date specified in that file, in accordance with
+// the Business Source License, use of this software will be governed
+// by the Apache License, Version 2.0, included in the file
+// licenses/APL.txt.
+
+package sql
+
+import (
+	"context"
+
+	"github.com/podomy/tardigrade/pkg/keys"
+	"github.com/podomy/tardigrade/pkg/security"
+	"github.com/podomy/tardigrade/pkg/sql/privilege"
+	"github.com/podomy/tardigrade/pkg/sql/sem/tree"
+	"github.com/podomy/tardigrade/pkg/sql/sqlbase"
+)
+
+type commentOnDatabaseNode struct {
+	n      *tree.CommentOnDatabase
+	dbDesc *sqlbase.DatabaseDescriptor
+}
+
+// CommentOnDatabase add comment on a database.
+// Privileges: CREATE on database.
+//   notes: postgres requires CREATE on the database.
+func (p *planner) CommentOnDatabase(
+	ctx context.Context, n *tree.CommentOnDatabase,
+) (planNode, error) {
+	dbDesc, err := p.ResolveUncachedDatabaseByName(ctx, string(n.Name), true)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := p.CheckPrivilege(ctx, dbDesc, privilege.CREATE); err != nil {
+		return nil, err
+	}
+
+	return &commentOnDatabaseNode{n: n, dbDesc: dbDesc}, nil
+}
+
+func (n *commentOnDatabaseNode) startExec(params runParams) error {
+	if n.n.Comment != nil {
+		_, err := params.p.extendedEvalCtx.ExecCfg.InternalExecutor.ExecWithUser(
+			params.ctx,
+			"set-db-comment",
+			params.p.Txn(),
+			security.RootUser,
+			"UPSERT INTO system.comments VALUES ($1, $2, 0, $3)",
+			keys.DatabaseCommentType,
+			n.dbDesc.ID,
+			*n.n.Comment)
+		if err != nil {
+			return err
+		}
+	} else {
+		_, err := params.p.extendedEvalCtx.ExecCfg.InternalExecutor.ExecWithUser(
+			params.ctx,
+			"delete-db-comment",
+			params.p.Txn(),
+			security.RootUser,
+			"DELETE FROM system.comments WHERE type=$1 AND object_id=$2 AND sub_id=0",
+			keys.DatabaseCommentType,
+			n.dbDesc.ID)
+		if err != nil {
+			return err
+		}
+	}
+
+	return MakeEventLogger(params.extendedEvalCtx.ExecCfg).InsertEventRecord(
+		params.ctx,
+		params.p.txn,
+		EventLogCommentOnDatabase,
+		int32(n.dbDesc.ID),
+		int32(params.extendedEvalCtx.NodeID),
+		struct {
+			DatabaseName string
+			Statement    string
+			User         string
+			Comment      *string
+		}{
+			n.n.Name.String(),
+			n.n.String(),
+			params.SessionData().User,
+			n.n.Comment},
+	)
+}
+
+func (n *commentOnDatabaseNode) Next(runParams) (bool, error) { return false, nil }
+func (n *commentOnDatabaseNode) Values() tree.Datums          { return tree.Datums{} }
+func (n *commentOnDatabaseNode) Close(context.Context)        {}

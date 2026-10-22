@@ -1,0 +1,126 @@
+# LogicTest: local
+
+statement ok
+CREATE TABLE x (
+  a INT PRIMARY KEY,
+  b INT,
+  INDEX (b)
+)
+
+statement ok
+ALTER TABLE x INJECT STATISTICS '[
+  {
+    "columns": ["a"],
+    "created_at": "2018-01-01 1:00:00.00000+00:00",
+    "row_count": 123123,
+    "distinct_count": 100,
+    "histo_buckets": []
+  },
+  {
+    "columns": ["b"],
+    "created_at": "2018-01-01 1:00:00.00000+00:00",
+    "row_count": 123123,
+    "distinct_count": 123123,
+    "histo_buckets": []
+  }
+]'
+
+statement ok
+CREATE TABLE y (
+  u INT PRIMARY KEY,
+  v INT REFERENCES x,
+  INDEX (v)
+)
+
+query T
+EXPLAIN (OPT, ENV) SELECT * FROM x WHERE b = 3
+----
+https://cockroachdb.github.io/text/decode.html#eJy0ksFum0AQhs_Zp_jFJbiFeDGXCKtSCdmotBhbsE1jWRZa1khBJWDB0hJVlfIQfkI_SQVxXY69hMNIM_98o_8Xe5_VTV6VDrxKfq8rIR9vb5B1mUzbvNhlNVTWKPx43SLEi5jLGbh7EzB00MmFgB_ya4RLjvBrEBjkIj1NXjtvGcY8cv2QQ9vX-ZOonzWsIn_hRmt8YWvoAm7sTQxy4Ye37AFdkib5roOe_p3fuQs_WI9wXRhIJ2QyJ8QNOItOfnqrV_s2LXJ51cEPPzOPI-Yu92PuezEuNwQAfg21_zRZFe1T2WgONufhIAjt3G-N0X6dCZXtEqE0B9qMWtcmtUxqgVoOpQ6l74eqjZBd3qi8lCqRVVv2mEXpSH7MG1UlsioS9bzP-qtjuGyL4gyOsbr6-e_gzLZm9qD9Nv47YfqGCQdDbxeSbC_nhLCHVeD6IfTlihtg4f0EMQv6X_4Od9FygQ7fPrGIIcUH2HNimqZJGilKdB9Pb4zgeDgcDy_HwwtkVTaqFnmpHExnU8vBZmrDxNTekj8BAAD__6-iy5g=
+
+statement error ENV only supported with \(OPT\) option
+EXPLAIN (ENV) SELECT * FROM x WHERE b = 3
+
+query T
+EXPLAIN (OPT, ENV) SELECT * FROM x WHERE b = 3
+----
+https://cockroachdb.github.io/text/decode.html#eJy0ksFum0AQhs_Zp_jFJbiFeDGXCKtSCdmotBhbsE1jWRZa1khBJWDB0hJVlfIQfkI_SQVxXY69hMNIM_98o_8Xe5_VTV6VDrxKfq8rIR9vb5B1mUzbvNhlNVTWKPx43SLEi5jLGbh7EzB00MmFgB_ya4RLjvBrEBjkIj1NXjtvGcY8cv2QQ9vX-ZOonzWsIn_hRmt8YWvoAm7sTQxy4Ye37AFdkib5roOe_p3fuQs_WI9wXRhIJ2QyJ8QNOItOfnqrV_s2LXJ51cEPPzOPI-Yu92PuezEuNwQAfg21_zRZFe1T2WgONufhIAjt3G-N0X6dCZXtEqE0B9qMWtcmtUxqgVoOpQ6l74eqjZBd3qi8lCqRVVv2mEXpSH7MG1UlsioS9bzP-qtjuGyL4gyOsbr6-e_gzLZm9qD9Nv47YfqGCQdDbxeSbC_nhLCHVeD6IfTlihtg4f0EMQv6X_4Od9FygQ7fPrGIIcUH2HNimqZJGilKdB9Pb4zgeDgcDy_HwwtkVTaqFnmpHExnU8vBZmrDxNTekj8BAAD__6-iy5g=
+
+#
+# Multiple Tables.
+#
+
+query T
+EXPLAIN (OPT, ENV) SELECT * FROM x, y WHERE b = 3
+----
+https://cockroachdb.github.io/text/decode.html#eJy0k9FOnE4Uxq-dp_jCjfD_gwu7NwbTpIizLS2yBqjVGEOAxTgVwQwDhTRNTJ9hL_t0-yQN7Kqktk17IReTzDnfd3K-8JvTjFesLEzYZXrDyzi9PjpE1mZpUrN8mXGIrBJoNipCbJ9aIUVoHboULWSyE8Pxwn14ixDeB9dVyU6yrWxu9sILQt9yvBDSHWe3Me8knPjOseWf4z09hxzDCmxFJTuOd0TP0EZJxJYt5OShPreOHfd8ZJdjFYlClANCLDek_nafftW9uzrJWbrXwvHeUTtEEFqhE4SOHWD3ggDAl-HsPykt8_q2qCQTF4_FoRFLj_dLdaTnWSyyZRQLyYQ01Y19TTc03YBumLpu6vr_wymNLEtWCVakIkrLuuhthq6P2tesEmWUlnkkurusnzo2F3WePxrHNl5-fho4nRnT2dD7qv51wuQFEw4LvVxIcrl78BOKXY9i_QzF5h9RrB-QG0mvbqIm4tlV1GK-8KnzxttoGwU-nVOfejYN0MrxE8Jd1GwQbn6PcK2i-TPC3S8RHrLTsxPXcjzIi5NQBfVOFQTU7bX_Ye4vjtGq6PDxLfUpErzC7IBomqYRVhQZ1z6VrICc8rKqFIL16vt6db9e3aNK4wLds0r7evsk-863_g-sV6utIC2LSvCYFcLEZDoxTFxMZtAwmV2SkeyK5SLjFWTB60whPwIAAP__o7Az-w==
+
+#
+# Same table twice should only show up once.
+#
+
+query T
+EXPLAIN (OPT, ENV) SELECT * FROM x one, x two
+----
+https://cockroachdb.github.io/text/decode.html#eJy0kcFum0wQgM_epxhxCfw_RItziezThmwkWowt2EaxogjBeqtsS3atZamJqkp5CB_7dH6SCuy6SL30Eg4j5pv5RjPae2EaqdUMIs2_Gl3y59sbEJ3gVSvrjTBgRWPh27ELoSijhFFg5Cah0IGLJiXEKbuGdMkg_ZQkPppUJ3LMomWas4zEKQNna-RLaV4dWGXxgmRr-EjX4JZA8sjz0SROb-kDdEVVyE0HbvWb35FFnKxHulv6UHnImyNEEkaz0z79qpfbtqolv-wgTj_QiEHOCItzFkc5XDwiAIDvQ-w_h-u6fVGNM4PHMxwKpXPOn_xRvxGlFZuitM4MnCkOrwMcBjgEHM4wnmH8_xCdkbKRjZWK24LrVvVaiPGo_Cwbqwuu68K-bkU_dSyrtq7P4lgzevdn4PQqnF4NtR_-P19YveOFw0LvdyR6upgjRB9WCYlTcJcr5gNN7z3IadI_-X9wly0X0AHJQSvhH__sTs9REAQBkkoJE3zRUoHLjW4aD8Fh__Owfzvs36Dhpeq1v5jd6Z7tT-yzrK0wDbjWtMJDvwIAAP__QyLfSg==
+
+#
+# Set a relevant session variable to a non-default value and ensure it shows up
+# in the environment dump.
+#
+
+statement ok
+SET reorder_joins_limit = 100
+
+query T
+EXPLAIN (OPT, ENV) SELECT * FROM y WHERE u = 3
+----
+https://cockroachdb.github.io/text/decode.html#eJxUj89O20AQh8_sU_zEBbuKCSiXKhGHxUzabZ11tLulRAhZxlnULcFG6z-ybzyEnzBPUkVJpfY4o2--0Xdvfe2qco64Kl59lRe_7m5he1s8t263tR6NrRt0R4qxWBE3BMNvE8KAgJ21ENJ8hkwN5I8kmbCz7rQ5TnEqtVFcSIPzd-_ecj-cY63EiqsNvtMGQQuu4_B_9OU16zJvX7Iey1SR-CKPbBdC0ZIUyZg0-iA_3Al5Rw8Ysi5z2x5B99e35CuRbP55G7QTdCELF4zxxJA6dRwSL9_b550rLgcI-Y1iA224EdqIWOPi8eliwZgmA28rv7U--125ss527s01uMH11dWCMXpYJ1xIBOnaTEDyPoSm5OD6hKVKVxjw8yspQosbzBYsiqKI1UVeYmDYj-N-_NiPHyiqsm587spmjun1HI_TGSJMZ0_sTwAAAP__tV18Lw==
+
+statement ok
+SET enable_zigzag_join = false
+
+query T
+EXPLAIN (OPT, ENV) SELECT * FROM y WHERE u = 3
+----
+https://cockroachdb.github.io/text/decode.html#eJxUj81O20AUhdfMUxyxwa5iAsqmSpTFYG7aaZ1xNJ5SIoQsx5nQKcFG4x_FrHgIP2GepEqTSmV57_3uOfrujKtsWYwRlvmzK7P81-0NzM7kq8Zu18ahNlWN9kgxFirimqD5TUTo4LGzBkLqz5CxhvwRRQN21p42xymMZaIVF1Lj_NXZl8x151goMedqie-0hNeAJ6H_Ed08p23qzCbdYRYrEl_kkW19KJqRIhlSgp2XHf6EvKV7dGmb2vUOXvsvb8bnIlr-V-s1A7Q-8yeM8UiTOnkcFC9fm9XW5pcdhPxGoUaiuRaJFmGCi4fHiwljCWk4U7q1cenv0hZVurUvtsYU11dXp7spstXWpG_26S17-kthinKzmTBG94uICwkvXugBSN75SCg6VH3CTMVzdPj5lRShwRSjCQuCIGBVnhXoGPZ9v-_f9_078rKoapfZoh5jeD3Gw3CEAMPRI_sTAAD___ayhqM=
+
+statement ok
+SET experimental_optimizer_foreign_keys = true
+
+query T
+EXPLAIN (OPT, ENV) SELECT * FROM y WHERE u = 3
+----
+https://cockroachdb.github.io/text/decode.html#eJxUj8tu2kAUhteZp_iVTewqDonYVCAWjjO005oxGk_ToCgaGTOmU4yNxhfZrPIQPCFPUlGI1C7P-b9z-Z61rUxZjBCU6caWSfrr6RG60-myMflKW9S6qtGeKUICQX1JIf3HkKKHQ64aMC4_g0cS_EcY3pKr9tI5V0HEYyl8xiWud9ZsE9tfYy7YzBcLfKcLOA38OHD_R7ONapXVmeowjQRlX_iZbV0IOqWC8oDG6JzkNMf4E31Br1plVh2c9mPf1J-xcPHPWae5ResSd0yIH0oqLh4nxbtds8xNeteD8W80kIilL1ksWRDj5vXtZkxITCWsLu1KW_W7NEWlcrM1NSZ4uL-_5LpIlrlWe7PeJ-u_FCYos-wj7nbamq0u6iRX5a42W7PXVmWl1WZdqI3uqxNfjAmhL_PQZxxONJe3oPzZRUzD02efMBXRDD1-fqWCosEEwzHxPM8jVZoU6AmOh8Px8H48vCMti6q2iSnqEQYPI7wOhvAwGL6RPwEAAP__x3qYDA==
+
+statement ok
+RESET reorder_joins_limit
+
+statement ok
+RESET enable_zigzag_join
+
+statement ok
+RESET experimental_optimizer_foreign_keys
+
+#
+# Test sequences.
+#
+
+statement ok
+CREATE SEQUENCE seq
+
+query T
+EXPLAIN (OPT, ENV) SELECT * FROM seq
+----
+https://cockroachdb.github.io/text/decode.html#eJwkjcFKxDAYBu95iu-oYmDbumZ1TzH-QqHJrmm27FXjDxZLS5tWfHwpvQ3MwDQ8pXbon2GG-DMNH_H79QX8x_FzabsvnjBzmvG7VUIYTzoQanq_kDOExCNs6RpdXQgZrL5u-JTnRaHyXfF42D8otT_sFEpnPFlyARnqoH1AdhSCrudKlw43p3O4B7nmFjVVZALu8OZPdl0chZRSisTjwn1kmbjjOK9G_AcAAP__7QE3fg==
+
+#
+# Test views.
+#
+
+statement ok
+CREATE VIEW v AS SELECT a, b, u, v FROM x, y WHERE b = 3
+
+query T
+EXPLAIN (OPT, ENV) SELECT * FROM v
+----
+https://cockroachdb.github.io/text/decode.html#eJy0k89um0wUxdeZpzhiE_g-iMHeRFiVSsi4pSU4Apo_iiIEmCjTEIiGgWJVlaI-g5d9Oj9Jhe3EJG2jdhEWI82959y5V_zuScYrVhYm7DK94WWcXh8eIGuzNKlZPss4RFYJNGsVIbZPrZAitA5cihYy2YnheOE-vGkI75PrqmQn2UTWN3vqBaFvOV4I6Y6z25jPJRz7zpHln-MjPYccwwpsRSU7jndIz9BGScRmLeTkIT6xjhz3vGeXYxWJQpQxIZYbUn_TT9fq3l2d5Czda-F4H6gdIgit0AlCxw6we0EA4Ovq7D4pLfP6tqgkExePwVUilh7vl2pPz7NYZLMoFpIJaagb-5puaLoB3TB13dT1_1en1LPMWCVYkYooLeuisxm63ktfs0qUUVrmkZjfZV3Vvrmo8_zR2Lfx8su24HBkDEer3Df1rydMXnHCVUOvNyS53B0_Q3HeoVj_gmLzjyjWD8j1pFc3URPx7CpqMZn61HnnrbWNAp9OqE89mwZo5XiL8Dxq1gg3f0a4VtG8jPD8twj3Zz9x6Cma9TqoWFWEFSCgbmfbRjHxp0dP10N99tTpe-pTJHiD0ZgQenbsWo4HeXocqqDeifJQ9L91rWZMNE3TCCuKjGufS1ZATnlZVQrBcvFjubhfLu5RpXHx9J0Xs-3bze53qu_dr14uFhtxWhaV4DErhInBcGCYuBiMoGEwuiQ92RXLRcYryILXmUJ-BgAA___6VlSO

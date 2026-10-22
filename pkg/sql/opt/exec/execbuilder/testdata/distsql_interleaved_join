@@ -1,0 +1,482 @@
+# LogicTest: 5node-dist
+
+# The following tables form the interleaved hierarchy:
+#   name:             primary key:                # rows:   'a' = id mod X :
+#   parent1           (pid1)                      40        8
+#     child1          (pid1, cid1)                150       66
+#       grandchild1   (pid1, cid1, gcid1)         410       201
+#     child2          (pid1, cid2, cid3)          15        7
+#       grandchild2   (pid1, cid2, cid3, gcid2)   51        13
+#   parent2           (pid2)                      5         2
+# Additional rows in child1, child2, and grandchild1 with no corresponding
+# parent row are also inserted.
+#
+# All IDs belonging to a table (pid1 --> parent1, cid1 --> child1, cid2,cid3
+# --> child2, etc.) start from 1 up to (# rows).
+# Foreign keys are modded by their ancestor's (# rows). For example, for child1
+# row with cid1=500, we take ((cid1-1) % 200 + 1) = 100 as pid1.
+# One exception is cid3, which is taken as cid2 % 15.
+# There's a column 'a' that's modded by a factor.
+#
+# This allows us to test the following edge cases (in order of tests):
+#   - one-to-many (parent1 - child1)
+#   - one-to-one and one-to-none (parent1 - child2)
+#   - parent-grandchild (parent1 - grandchild1)
+#   - multiple interleaved columns (child2 - grandchild2)
+#   - additional ancestor above (child2 - grandchild2)
+#   - no interleaved relationship (parent1 - parent2, parent2 - child1)
+#   - TODO(richardwu): sibling-sibling (child1 - child2)
+
+#################
+# Create tables #
+#################
+
+statement ok
+CREATE TABLE parent1 (pid1 INT PRIMARY KEY, pa1 INT)
+
+statement ok
+CREATE TABLE parent2 (pid2 INT PRIMARY KEY, pa2 INT)
+
+statement ok
+CREATE TABLE child1 (
+  pid1 INT,
+  cid1 INT,
+  ca1 INT,
+  PRIMARY KEY(pid1, cid1)
+)
+INTERLEAVE IN PARENT parent1 (pid1)
+
+statement ok
+CREATE TABLE child2 (
+  pid1 INT,
+  cid2 INT,
+  cid3 INT,
+  ca2 INT,
+  PRIMARY KEY(pid1, cid2, cid3)
+)
+INTERLEAVE IN PARENT parent1 (pid1)
+
+statement ok
+CREATE TABLE grandchild1 (
+  pid1 INT,
+  cid1 INT,
+  gcid1 INT,
+  gca1 INT,
+  PRIMARY KEY(pid1, cid1, gcid1)
+)
+INTERLEAVE IN PARENT child1 (pid1, cid1)
+
+# No foreign key since we are permitting the rows to overflow out of child2
+# for pid1 > 15.
+statement ok
+CREATE TABLE grandchild2 (
+  pid1 INT,
+  cid2 INT,
+  cid3 INT,
+  gcid2 INT,
+  gca2 INT,
+  PRIMARY KEY(pid1, cid2, cid3, gcid2)
+)
+INTERLEAVE IN PARENT child2 (pid1, cid2, cid3)
+
+####################
+# Split our ranges #
+####################
+
+# Split at parent1 key into five parts.
+statement ok
+ALTER TABLE parent1 SPLIT AT SELECT i FROM generate_series(8, 32, 8) AS g(i)
+
+# Split at child1 keys in between parent1 parts (total 10 parts).
+statement ok
+ALTER TABLE child1 SPLIT AT SELECT pid1, pid1 + 40 FROM
+generate_series(4, 36, 8) AS g(pid1)
+
+# Split at grandchild2 keys in between the 10 parts (total 20 parts).
+statement ok
+ALTER TABLE grandchild2 SPLIT AT SELECT pid1, pid1 + 40, pid1, pid1 FROM
+generate_series(2, 38, 4) AS g(pid1)
+
+# Relocate the twenty parts to the five nodes.
+statement ok
+ALTER TABLE grandchild2 EXPERIMENTAL_RELOCATE
+  SELECT ARRAY[((i-1)/2)::INT%5+1], i, i+20, i, i FROM generate_series(1, 39, 2) AS g(i)
+
+# Verify data placement.
+query TTTI colnames,rowsort
+SELECT start_key, end_key, replicas, lease_holder from [SHOW RANGES FROM TABLE parent1]
+----
+start_key                   end_key                     replicas  lease_holder
+NULL                        /2/#/56/1/42/2/#/58/1/2     {1}       1
+/2/#/56/1/42/2/#/58/1/2     /4/#/55/1/44                {2}       2
+/4/#/55/1/44                /6/#/56/1/46/6/#/58/1/6     {3}       3
+/6/#/56/1/46/6/#/58/1/6     /8                          {4}       4
+/8                          /10/#/56/1/50/10/#/58/1/10  {5}       5
+/10/#/56/1/50/10/#/58/1/10  /12/#/55/1/52               {1}       1
+/12/#/55/1/52               /14/#/56/1/54/14/#/58/1/14  {2}       2
+/14/#/56/1/54/14/#/58/1/14  /16                         {3}       3
+/16                         /18/#/56/1/58/18/#/58/1/18  {4}       4
+/18/#/56/1/58/18/#/58/1/18  /20/#/55/1/60               {5}       5
+/20/#/55/1/60               /22/#/56/1/62/22/#/58/1/22  {1}       1
+/22/#/56/1/62/22/#/58/1/22  /24                         {2}       2
+/24                         /26/#/56/1/66/26/#/58/1/26  {3}       3
+/26/#/56/1/66/26/#/58/1/26  /28/#/55/1/68               {4}       4
+/28/#/55/1/68               /30/#/56/1/70/30/#/58/1/30  {5}       5
+/30/#/56/1/70/30/#/58/1/30  /32                         {1}       1
+/32                         /34/#/56/1/74/34/#/58/1/34  {2}       2
+/34/#/56/1/74/34/#/58/1/34  /36/#/55/1/76               {3}       3
+/36/#/55/1/76               /38/#/56/1/78/38/#/58/1/38  {4}       4
+/38/#/56/1/78/38/#/58/1/38  NULL                        {5}       5
+
+query TTTI colnames,rowsort
+SELECT start_key, end_key, replicas, lease_holder from [SHOW RANGES FROM TABLE child1]
+----
+start_key                   end_key                     replicas  lease_holder
+NULL                        /2/#/56/1/42/2/#/58/1/2     {1}       1
+/2/#/56/1/42/2/#/58/1/2     /4/#/55/1/44                {2}       2
+/4/#/55/1/44                /6/#/56/1/46/6/#/58/1/6     {3}       3
+/6/#/56/1/46/6/#/58/1/6     /8                          {4}       4
+/8                          /10/#/56/1/50/10/#/58/1/10  {5}       5
+/10/#/56/1/50/10/#/58/1/10  /12/#/55/1/52               {1}       1
+/12/#/55/1/52               /14/#/56/1/54/14/#/58/1/14  {2}       2
+/14/#/56/1/54/14/#/58/1/14  /16                         {3}       3
+/16                         /18/#/56/1/58/18/#/58/1/18  {4}       4
+/18/#/56/1/58/18/#/58/1/18  /20/#/55/1/60               {5}       5
+/20/#/55/1/60               /22/#/56/1/62/22/#/58/1/22  {1}       1
+/22/#/56/1/62/22/#/58/1/22  /24                         {2}       2
+/24                         /26/#/56/1/66/26/#/58/1/26  {3}       3
+/26/#/56/1/66/26/#/58/1/26  /28/#/55/1/68               {4}       4
+/28/#/55/1/68               /30/#/56/1/70/30/#/58/1/30  {5}       5
+/30/#/56/1/70/30/#/58/1/30  /32                         {1}       1
+/32                         /34/#/56/1/74/34/#/58/1/34  {2}       2
+/34/#/56/1/74/34/#/58/1/34  /36/#/55/1/76               {3}       3
+/36/#/55/1/76               /38/#/56/1/78/38/#/58/1/38  {4}       4
+/38/#/56/1/78/38/#/58/1/38  NULL                        {5}       5
+
+query TTTI colnames,rowsort
+SELECT start_key, end_key, replicas, lease_holder from [SHOW RANGES FROM TABLE grandchild1]
+----
+start_key                   end_key                     replicas  lease_holder
+NULL                        /2/#/56/1/42/2/#/58/1/2     {1}       1
+/2/#/56/1/42/2/#/58/1/2     /4/#/55/1/44                {2}       2
+/4/#/55/1/44                /6/#/56/1/46/6/#/58/1/6     {3}       3
+/6/#/56/1/46/6/#/58/1/6     /8                          {4}       4
+/8                          /10/#/56/1/50/10/#/58/1/10  {5}       5
+/10/#/56/1/50/10/#/58/1/10  /12/#/55/1/52               {1}       1
+/12/#/55/1/52               /14/#/56/1/54/14/#/58/1/14  {2}       2
+/14/#/56/1/54/14/#/58/1/14  /16                         {3}       3
+/16                         /18/#/56/1/58/18/#/58/1/18  {4}       4
+/18/#/56/1/58/18/#/58/1/18  /20/#/55/1/60               {5}       5
+/20/#/55/1/60               /22/#/56/1/62/22/#/58/1/22  {1}       1
+/22/#/56/1/62/22/#/58/1/22  /24                         {2}       2
+/24                         /26/#/56/1/66/26/#/58/1/26  {3}       3
+/26/#/56/1/66/26/#/58/1/26  /28/#/55/1/68               {4}       4
+/28/#/55/1/68               /30/#/56/1/70/30/#/58/1/30  {5}       5
+/30/#/56/1/70/30/#/58/1/30  /32                         {1}       1
+/32                         /34/#/56/1/74/34/#/58/1/34  {2}       2
+/34/#/56/1/74/34/#/58/1/34  /36/#/55/1/76               {3}       3
+/36/#/55/1/76               /38/#/56/1/78/38/#/58/1/38  {4}       4
+/38/#/56/1/78/38/#/58/1/38  NULL                        {5}       5
+
+statement ok
+SET CLUSTER SETTING sql.distsql.interleaved_joins.enabled = true;
+
+#####################
+# Interleaved joins #
+#####################
+
+# Select over two ranges for parent/child with split at children key.
+query T
+SELECT url FROM [EXPLAIN (DISTSQL) SELECT * FROM parent1 JOIN child1 USING(pid1) WHERE pid1 >= 3 AND pid1 <= 5]
+----
+https://cockroachdb.github.io/distsqlplan/decode.html#eJzMUsFu00AQvfMVq3eKYVC9Dr1YiuSKGnAVnOIUgVR8sLzT1JLrNbtrBKry78jeSDgVVMCpN8-89-b5zc497NcWMbbpOn19JQbTijfF5r24Tj9frs-yXCzOs-3V9sM6EAfKc0_oK8Odk-Jik-Wivm1aJcXHbZa_FYu-UTIQn96lReoL8WUIwyWvxDIQZ_n5vFmvxGlQgtBpxXl1xxbxNSQIEQhLlITe6Jqt1WaE7idipr4jDglN1w_Ot13jWkaModNGsWEFgmJXNe2Il_uSUGvDiH9Rc_1S9yfRAyJBD-4wtiRYV-0YcbSnmbWcWf9mcNY5Ni1X37jgSrG50E3H5iQ8csKabxzGeM1dZX4kh4WCUDS72znitwuCnwNCyzdukcgXwcqM3OkThM3gYpFISiJKXlFyij-lkUdpov9KI59omvDxNAXbXneW_-rVw_FsWO3Y35jVg6n50uh6svHlZtJNDcXWeXTpi6zz0PiDc7F8VBweieVDcfRP4nL_7GcAAAD__-nTPX0=
+
+# Swap parent1 and child1 tables.
+query T
+SELECT url FROM [EXPLAIN (DISTSQL) SELECT * FROM child1 JOIN parent1 USING(pid1) WHERE pid1 >= 3 AND pid1 <= 5]
+----
+https://cockroachdb.github.io/distsqlplan/decode.html#eJzMUtFulEAUffcrJuep6DVlIH0h2YTGotKsbGVrNKk8EOZ2S0IZnBmMptl_NzCbyDbaqE--ce855x7OnfsA-6VDgm22zl5di9F04nW5eSdusk9X6_O8ECcX-fZ6-34diAPluSc0d22npLjc5IUYasO9k-LDNi_eiJOhVTIQH99mZeYL8XkMw5hXIg7EeXGxbDYrcRZUIPRacVHfs0VyAwlCBEKMijAY3bC12kzQw0zM1TckIaHth9H5tmtdx0gw9tooNqxAUOzqtpvwal8RGm0YyU9qoV_q4TR6RCTo0R3GVgTr6h0jifa0sJYL618MznvHpuP6K5dcKzaXuu3ZnIZHTljzrcMUr72vzffULxSEst3dLYHDdkHwc0Do-NadpPJFsDITef4EYTO6RKSS0ojSmNIz_C6NPEoT_VMa-Z-mCZ9OU7IddG_5j149nM6G1Y79jVk9moavjG5mG19uZt3cUGydR2Nf5L2Hph9ciuWT4vBILB-Lo78SV_tnPwIAAP__2mo9ew==
+
+# Select over two ranges for parent/child with split at grandchild key.
+# Also, rows with pid1 <= 30 should have 4 rows whereas pid1 > 30 should
+# have 3 rows.
+query T
+SELECT url FROM [EXPLAIN (DISTSQL) SELECT * FROM parent1 JOIN child1 ON parent1.pid1 = child1.pid1 WHERE parent1.pid1 >= 29 AND parent1.pid1 <= 31 ORDER BY parent1.pid1]
+----
+https://cockroachdb.github.io/distsqlplan/decode.html#eJzUUdFu0zAUfecrru5TywyLU_ZApEoeNIhMJRnpJEAjD1F811nK4mA7CFT131Hsoi2oQ8Abb7n3nONzz8kO7ZcWE9yk6_T1FQymhTdl8Q6u04-X6_Msh9kq21xt3q_ncKA8DYS-NtQ5DhdFlkNzq1rJoch_rp_3SnJYHoAwfXiblinMJozPQxQtaAnxyzmc56tjaLOEBZ9DUa7SEl59mjhUyLDTkvL6jiwm18iR4RlWDHujG7JWm3G986RMfsMkYqi6fnDjumLYaEOY7NAp1xImmHWOTEv1VyqplmQutOrInI7PSnK1ar3Lmm4cjh7qrjbfxeEiZFiq7e1DJMRHhuEdZNjSjZsJfjJfmpHrP5FhMbgEBGciZmLBxAsmzrDaM9SDuz_WunpLmPA9eyTQfQ5tJBmS07MFP8FqfyR1rp_p_jSesB9zjyfu_J_qjP6POo8EKsn2urP0R1VFY9cktxT-jdWDaejS6MbbhLHwOr-QZF1AeRiyzkP-wIdi_lvxYiKOfhXHf-Vc7Z_8CAAA__8HAVEc
+
+# Parent-child where pid1 <= 15 have one joined row and pid1 > 15 have no
+# joined rows (since child2 only has 15 rows up to pid1 = 15).
+# Note this spans all 5 nodes, which makes sense since we want to read all
+# parent rows even if child rows are non-existent (so we can support OUTER
+# joins).
+# TODO(richardwu): we can remove nodes reading from just one table for INNER
+# joins or LEFT/RIGHT joins.
+query T
+SELECT url FROM [EXPLAIN (DISTSQL) SELECT * FROM parent1 JOIN child2 USING(pid1) WHERE pid1 >= 12 ORDER BY pid1]
+----
+https://cockroachdb.github.io/distsqlplan/decode.html#eJzMlFFv0zAUhd_5FdZ5atlFi9N0D5EmBViATCUZ6RCgkYcovusiZXFwHASq-t9RkklbEQPWvvTN9j3H536WfNdov1XwsQwX4etL0ZlKvEmT9-Iq_HyxeBnFYnIWLS-XHxZTcSd5Pgqa3HBtpThPolgUN2WlXPFxGcVvxaQplZyKT-_CNBT9WnztHGfGp0K6IknPwlS8-jIUMhBqrTjOb7mFfwUJggvCDAQPhDkyQmN0wW2rTS9ZD4ZI_YDvEMq66Wx_nBEKbRj-Gra0FcNHVFs2FeffOeVcsTnXZc3m2AFBsc3Lakhc8LVFn1He5uZncEcFQlqubh5WRkQQxntAqPjaTgJ5ND01vXZYgpB01heBpMClwKNgTsEJsg1Bd_a-2dbmK4YvN_QI0D2HNooNq-22A3mEbPMH6li_0M3xfEv9WLq7lS53ek55uM_p7gTkHi7QbCeg2eECeTsBeYcL9I-RlHLb6Lrl__qdTv-9Wa14HAet7kzBF0YXQ8y4TQbfcKC4tWNVjpuoHkpDgw_N8q_mky2z87vZ3Sd5to_Z28c8f5I52zz7FQAA__8hjUPy
+
+# These rows are all on the same node 1 (gateway).
+query T
+SELECT url FROM [EXPLAIN (DISTSQL) SELECT * FROM parent1 JOIN child2 USING(pid1) WHERE pid1 IN (1, 11, 21, 31) ORDER BY pid1]
+----
+https://cockroachdb.github.io/distsqlplan/decode.html#eJyMUE2L2zAQvfdXDHOK24FG6cfBUHDbuK2Da6d2SluCD8aaJALHciV52SX4vy-2Art7WNjbzHtP7-nNBe3_FkMs4zT-uoPBtPCtyH_CPv67TT8nGSzWSbkrf6UBXCWvvaCvDXdOwCZPMmhOqpUr-F0m2XdY9EqKAP78iIsYphkmG0EgBMFKELwTAeTFOi7gy79ZUCFhpyVn9ZkthnsUWBH2RjdsrTYTdJkFibzFcEmoun5wE1wRNtowhhd0yrWMISadY9NyfcMF15LNRquOzdslEkp2tWrnhJQPDqcMda7NXXRtg4SFOp4eM74aEnofJGz54BaReBN8MpN2HpEwH1wIkaBoRdF7ij5Q9BGrkVAP7uGz1tVHxlCM9PJCBdted5afFHjOeTlWhCyP7I9m9WAa3hrdzDF-zed3MyDZOs8KvySdp8ZqfHUfAAD__0Q3qDk=
+
+# Parent-grandchild.
+# We add the pa1 > 0 condition so a lookup join is not considered to be a better plan.
+query T
+SELECT url FROM [EXPLAIN (DISTSQL)
+  SELECT * FROM parent1 JOIN grandchild2 USING(pid1) WHERE
+    pid1 >= 11 AND pid1 <= 13
+    OR pid1 >= 19 AND pid1 <= 21
+    OR pid1 >= 31 AND pid1 <= 33
+    OR pa1 > 0
+]
+----
+https://cockroachdb.github.io/distsqlplan/decode.html#eJzsldFv0zAQxt_5K6x7SsBocdwOFqlSJtZBppKOtAikkYcovnWRsjg4DgJV_d9RnXZLqxRBK5WXvtW-78vV3--km0P1PQcPJsPR8N2U1Con19H4I7kbfr0dXQYhsa6CyXTyaWSTleRlIygThYVm5GYchGSmkkKkD1kuXPJ5EoTviVVmgtnky4dhNCSWZZkz-VY7DscBYcwml-EVad2mA8K4bZNxRLbFF11il9mdat75ac7X6jJZa4ljx0ChkALD5BEr8O6AAQUXKHCg0AMKfYgplEqmWFVSLSVzYwjET_AcCllR1np5HVNIpULw5qAznSN4EBQaVY7JD4wwEahuZFagOnOAgkCdZLnpOMJ7Dcse2WOifvmrWIGaArnOco3KMwn67fw8zwvC6dvVW_12iOvSKp227WKnzX36YoeP727H-ZbPd5_iXVeAQpTNHtrPbA0MUGiSAQo53mvLZ6_sgVoazE-gMK61R3xGfZf6Per3qX9O_TcQLyjIWj8TqHQyQ_DYgu6g9AynLqQSqFBs0IgXHRxD-VqWZ_0tYXdrd6M122tA2GlAjjog7l6U3BOlo1Lie1HiJ0pHpdTbi1LvROm_rcQOShFWpSwq_KuN5yxXJooZNvu1krVK8VbJ1LRpjmPjMxcCK91UWXMIClMyf7BtZn80n2-YnW2ze0hnfoi5d4i5_0_mePHidwAAAP__aOtjjw==
+
+query T
+SELECT url FROM [EXPLAIN (DISTSQL)
+  SELECT * FROM grandchild2 JOIN parent1 USING(pid1) WHERE
+    pid1 >= 11 AND pid1 <= 13
+    OR pid1 >= 19 AND pid1 <= 21
+    OR pid1 >= 31 AND pid1 <= 33
+    OR pa1 > 0
+]
+----
+https://cockroachdb.github.io/distsqlplan/decode.html#eJzslVFv0zAUhd_5FdZ9SsBocdwCi1TJE-sgU0lHWgTSyEMU33WRsjg4DgJV_e-oSbulVYqglbqXvtW-5_g057PkOZQ_MvBgMhwN309JpTNyFY4_kdvht5vRhR8Q69KfTCefRzZZSV42gpmOc5ncp5l0yfXYD0gRa8wNI18mfvCBWEUqmU2-fhyGQ2JZVr0m3yvH4TggjNnkIrgkrd1kQBi3bTIOybb4vEvsMrtTzTuP5nytLuK1ljh2BBRyJTGIH7AE7xYYUHCBAgcKPaDQh4hCoVWCZan0UjKvDb78BZ5DIc2Lyiy3IwqJ0gjeHExqMgQP_NygzjD-iSHGEvW1SnPUZw5QkGjiNKsTR3hnYJmRPsT6t2jVChTCdHbfnq46Xk_IVZoZ1F5dsGjX63meH0zfraoQ7Y7Xo1V5bdv5Tpv7eGKHj--O43zLJ9zH9tcToNBUAxQyvDOWYK_sgV5-YP0TKIwr4xHBqHCp4FT0qOhT8RaiBQVVmScEpYlnCB5b0B2YnuhUudISNcoNHNGiA2SgXqvirL8l7I52N6LZXjeEnW7IcW-Iuxcm94TpuJj4Xpj4CdNxMfX2wtQ7YXq-Z7EDU4hlofIS_-nVc5bPJsoZNm9sqSqd4I1WSR3TLMe1r96QWJpmypqFn9ej-g-2zeyv5jcbZmfb7B6SzA8x9w4x9__LHC1e_AkAAP__Vhplvw==
+
+query TTT
+EXPLAIN SELECT * FROM grandchild2 JOIN parent1 USING(pid1) WHERE
+  pid1 >= 11 AND pid1 <= 13
+  OR pid1 >= 19 AND pid1 <= 21
+  OR pid1 >= 31 AND pid1 <= 33
+  OR pa1 > 0
+----
+·                distributed         true
+·                vectorized          false
+render           ·                   ·
+ └── merge-join  ·                   ·
+      │          type                inner
+      │          equality            (pid1) = (pid1)
+      │          right cols are key  ·
+      │          mergeJoinOrder      +"(pid1=pid1)"
+      ├── scan   ·                   ·
+      │          table               grandchild2@primary
+      │          spans               ALL
+      └── scan   ·                   ·
+·                table               parent1@primary
+·                spans               ALL
+·                filter              ((((pid1 >= 11) AND (pid1 <= 13)) OR ((pid1 >= 19) AND (pid1 <= 21))) OR ((pid1 >= 31) AND (pid1 <= 33))) OR (pa1 > 0)
+
+# Join on multiple interleaved columns with an overarching ancestor (parent1).
+# Note there are 5 nodes because the filter cid2 >= 12 AND cid2 <= 14
+# creates a giant parent span which requires reading from all rows.
+query T
+SELECT url FROM [EXPLAIN (DISTSQL)
+  SELECT * FROM child2 JOIN grandchild2 ON
+    child2.pid1=grandchild2.pid1
+    AND child2.cid2=grandchild2.cid2
+    AND child2.cid3=grandchild2.cid3
+  WHERE
+    child2.pid1 >= 5 AND child2.pid1 <= 7
+    OR child2.cid2 >= 12 AND child2.cid2 <= 14
+    OR gcid2 >= 49 AND gcid2 <= 51
+]
+----
+https://cockroachdb.github.io/distsqlplan/decode.html#eJzslU9r20wQxu_vp1jmZL2ZNl5Jzh-BYUPjUAVXTp1AC6kOQjtRBIrWXa1KS_B3L5KsWHLc0jqQXnyzZp6fZ_d5FuYRiq8ZeHA9mU7e3bBSZ-xiPvvAbiefr6ZnfsAG5_71zfXHqcVWkv8bQXyfZtJmlzM_YImOcrkqzAI2GDS_3y5Sydm4265LFjsLzlkrilNpb4iqkvVM5TxXORb79H4yn7BBf-aXcjh0aMxG_T9Z9-IxO7YsNpuvD1ufowW5veWQLcldq2WTHuWerqikpx9xywoBIVeSguiBCvBugQOCDQgOILiAMIIQYaFVTEWhdCV5rAFffgdviJDmi9JU5RAhVprAewSTmozAAz83pDOKvtGcIkn6UqU56cMhIEgyUZrVE6d0Z6CakT5E-odobgYI8zS57zY6HrdddpFmhrRX-Sw69nqe5wc3J6tbi465bWflk-hau0F1jX3CWs7tmLvBuR2DnzhAaG4PCBndmYHgByjsAxTOgTXW1WV6JUCYlcZjgqOwUTgoXBQjFEcojlGcoDiFcImgSrO2vzBRQuDxJf4ionUyZa60JE2yF0W43BJioN6oxeFoQ7h9tN0bzXd6HXz_Ol7vddg7RWTvI3q9iJydInL2Eb1eRO5OEbn7iP7NGtwS0ZyKhcoL-qMtN6zWJMmEmp1aqFLHdKVVXI9pPmc1VxckFabp8ubDz-tWfcAuzH8LH_Xg4SZsv2Sy8xLYfQk8-is4XP73MwAA__8gC4Cq
+
+query TTT
+EXPLAIN
+  SELECT * FROM child2 JOIN grandchild2 ON
+    child2.pid1=grandchild2.pid1
+    AND child2.cid2=grandchild2.cid2
+    AND child2.cid3=grandchild2.cid3
+  WHERE
+    child2.pid1 >= 5 AND child2.pid1 <= 7
+    OR child2.cid2 >= 12 AND child2.cid2 <= 14
+    OR gcid2 >= 49 AND gcid2 <= 51
+----
+·           distributed        true
+·           vectorized         false
+merge-join  ·                  ·
+ │          type               inner
+ │          equality           (pid1, cid2, cid3) = (pid1, cid2, cid3)
+ │          left cols are key  ·
+ │          mergeJoinOrder     +"(pid1=pid1)",+"(cid2=cid2)",+"(cid3=cid3)"
+ ├── scan   ·                  ·
+ │          table              child2@primary
+ │          spans              ALL
+ └── scan   ·                  ·
+·           table              grandchild2@primary
+·           spans              ALL
+·           filter             (((pid1 >= 5) AND (pid1 <= 7)) OR ((cid2 >= 12) AND (cid2 <= 14))) OR ((gcid2 >= 49) AND (gcid2 <= 51))
+
+# Aggregation over parent and child keys.
+query T
+SELECT url FROM [EXPLAIN (DISTSQL)
+  SELECT sum(parent1.pid1), sum(child1.cid1) FROM parent1 JOIN child1 USING(pid1) WHERE
+    pid1 >= 10 AND pid1 <= 39
+]
+----
+https://cockroachdb.github.io/distsqlplan/decode.html#eJzUlVFv2j4Uxd__n8K6T0R_q40ToBAJCbSyLRWFDlptUpeHKLlNI4WYOc60CfHdJ8d0Dah1JuCFt9j3nvzuOY7iNRQ_MvBgMZ6MP9yTUmTk43x2Sx7H3-4mI39KWtf-4n7xZWKRbUtRLlurUGAu2cUqjZlFq63oOc1idhGpHf2KbRO5mflTosvkYeFPP5FWpSNfP4_nY70g30vbdnFAmG2R0fS6vhsNiNu3AqCQ8xin4RIL8B6BAQUHKLhAoQ0UOhBQWAkeYVFwoVrWlcCPf4FnU0jzVSnVdkAh4gLBW4NMZYbggZ9LFBmGP3GOYYzihqc5ikuFiFGGaVYRJ_gkQTHSZSh-D7f-gFYFMiulR4ZqOU-T53qj9v5SeGmkQzW9JgGFDJ9ka8j-twZCdVWPQOFvswvBhgIv5auLQoYJgsc29N-djpJEYBJKLi67u-4WD7etIVPM6smx3gU67wJfOWXORYwC4x1IsDGPxOxDZ3J3ZmIHHbdzhsfd4LSW7dVpjts5KFr3DKNtcFqLtneaaN2Dom2fYbQNTmvR9k8TbfugaO0zjLbBaS3azun__28A51iseF7g3j3w9pttdT9gnKC-TApeigjvBI8qjF7OKl21EWMhdZXphZ_rkhqwLmZGsbMjZvtix0xuQLtGddssbh8zd8co7prJ3WPIV0Zxz0zuHUPum8_KbvhMzB_ZPjvY_PcnAAD__4AGlMA=
+
+###############
+# Outer joins #
+###############
+
+# The schema/values for each table are as follows:
+# Table:        pkey:                     pkey values (same):   values:
+# outer_p1      (pid1)                    {1, 2, 3, ... 20}     100 + pkey
+# outer_c1      (pid1, cid1, cid2)        {2, 4, 6, ... 28}     200 + pkey
+# outer_gc1     (pid1, cid1, cid2, gcid1) {4, 8, 12, ... 36}    300 + pkey
+
+# Split between 4 nodes based on pkey value (p):
+# node 1:       p - 1 mod 20 ∈ [1...5)
+# node 2:       p - 1 mod 20 ∈ [5...10)
+# node 3:       p - 1 mod 20 ∈ [10...15)
+# node 4:       p - 1 mod 20 ∈ [15...20)
+
+statement ok
+CREATE TABLE outer_p1 (
+  pid1 INT PRIMARY KEY,
+  pa1 INT
+)
+
+statement ok
+CREATE TABLE outer_c1 (
+  pid1 INT,
+  cid1 INT,
+  cid2 INT,
+  ca1 INT,
+  PRIMARY KEY (pid1, cid1, cid2)
+) INTERLEAVE IN PARENT outer_p1 (pid1)
+
+statement ok
+CREATE TABLE outer_gc1 (
+  pid1 INT,
+  cid1 INT,
+  cid2 INT,
+  gcid1 INT,
+  gca1 INT,
+  PRIMARY KEY (pid1, cid1, cid2, gcid1)
+) INTERLEAVE IN PARENT outer_c1 (pid1, cid1, cid2)
+
+statement ok
+ALTER TABLE outer_p1 SPLIT AT
+  SELECT i FROM generate_series(0, 40, 5) AS g(i)
+
+statement ok
+ALTER TABLE outer_p1 EXPERIMENTAL_RELOCATE
+  SELECT ARRAY[(((i-3)/5)%4)::INT + 1], i FROM generate_series(3, 40, 5) AS g(i)
+
+query TTTI colnames,rowsort
+SELECT start_key, end_key, replicas, lease_holder from [SHOW RANGES FROM TABLE outer_p1]
+----
+start_key  end_key  replicas  lease_holder
+NULL       /0       {5}       5
+/0         /5       {1}       1
+/5         /10      {2}       2
+/10        /15      {3}       3
+/15        /20      {4}       4
+/20        /25      {1}       1
+/25        /30      {2}       2
+/30        /35      {3}       3
+/35        /40      {4}       4
+/40        NULL     {5}       5
+
+### Begin OUTER queries
+
+query T
+SELECT url FROM [EXPLAIN (DISTSQL) SELECT * FROM outer_p1 FULL OUTER JOIN outer_c1 USING (pid1)]
+----
+https://cockroachdb.github.io/distsqlplan/decode.html#eJzclM9q20AQxu99imVOdjslXknOQVBQcJWioEqpZEMhiCK0E1egaNXdVWkwfveiVUrqNP1n33TbnZlvvvnNYXagvzTgQx7G4WrNetWwyyx9z27Cj9fxRZSw2dsoX-cf4jl7KHk5FsjekPrUcXa5iWN2lUbJQ6jibJNHyTs262rB5wUgtFJQUt6RBv8GOCA4gOACggcISygQOiUr0lqqoWRnBZH4Bv4CoW673gzhAqGSisDfgalNQ-BD1BpSDZVfKaNSkLqSdUvqbLAQZMq6sY4x3RoYPOq7Ut0HPyYHhKzefv41VQ2psRUgrO878kfKdLMOM8sKCA3dmlnAX83fqKGLfQ4tqRWkfLZKL-IwX4WzgGPgzpEFDrLAQxYskQXnUOwRZG8e2bQptwQ-3-Nv-B-x-1YqQYrEAWexf2ZDiXwtu7Plk8LnrZ0Da37U6p3JrN45it-dDL97FL83GX7vKP7FZPj_cnoz0p1sNf3TZVkMp4nElsY7pmWvKrpWsrI24ze1OhsQpM2Y5eMnam3KDvizmP9RfH4gXjwVO6c4u6eIvVPEy_8SF_sX3wMAAP__E6R9Gg==
+
+query T
+SELECT url FROM [EXPLAIN (DISTSQL) SELECT * FROM outer_gc1 FULL OUTER JOIN outer_c1 USING (pid1, cid1, cid2)]
+----
+https://cockroachdb.github.io/distsqlplan/decode.html#eJzklU9r20AQxe_9FMuc7HpKvJKctoLCBlcpCqqUSjYUgihCO3EFilZdrUqD8XcvktImStN_9tEXw76Zt8_zWxhtoflSgguJF3jLFWt1yc7j6D278j5eBmd-yCZv_WSVfAim7K7l-dCgWkP60ybn7HwdBOwi8sM7LedsnfjhOzapC8mR5T9-rWkKCJWSFGY31IB7BRwQLECwAcEBhAWkCLVWOTWN0l3Ltjf48hu4c4SiqlvTySlCrjSBuwVTmJLABb8ypEvKvlJMmSR9oYqK9EkXIclkRdknBnRtoMsobjJ9K36OAQhxsfn8a60vDXcBwuq2JncYOVqvvLgfHBBKujYTwWcorBkKezZ9o7vbRlIXQZUk7bJldBZ4ydKbCI7idIoPBAvFy5Fgo3g1RSYcZGKBTLyGdIegWnOPojHZhsDlO_wNrntKbaW0JE1yhCXdPQE0VC9UfbJ41Ph0tDWK5nu9lHWsL2Xthcs-Vlz2XricY8Xl7IVrfqy4_vKViampVdXQP23FebdWSW5o2MGNanVOl1rlfcxwjHpfL0hqzFDlw8Gv-lL_Bx-a-R_NpyPz_LHZOiTZPsTsHGJe_Jc53T37HgAA__8UBrYr
+
+query T
+SELECT url FROM [EXPLAIN (DISTSQL) SELECT * FROM outer_c1 LEFT OUTER JOIN outer_p1 USING (pid1) WHERE pid1 >= 0 AND pid1 < 40]
+----
+https://cockroachdb.github.io/distsqlplan/decode.html#eJzUVF1vlEAUffdXTM7TomPKAPpA0oTGUqVBqCyNJpUYArcrCWVwGIzNZv-7Yahpt9aPbp_2jXvPPfdwTnJnjeFbCx_LMA7f5GxULTvJ0vfsIvx0Fh9FCVscR8t8-SG22M3I83lAjprUl0qwODzJ2WkaJTetXrDzZZS8ZYu-qYXFPr4Ls3Au2OfRtl06ZLbFjpLju82KebZVgKOTNSXlFQ3wLyDA4YDDBYeHgqNXsqJhkGqC12Y4qn_Atzmarh_11C44KqkI_hq60S3BR9RpUi2V3ymjsiZ1KpuO1IENjpp02bRGLaZLjUmjuSrVdfDLITiyZvX1d6ifoHkVOPLrnvw5jfQ8DzOTCThautSLQLywDtW0xXyCIx21zwLBA4cHLg88HrxGseGQo771MehyRfDFhv_B663FsZOqJkX1lqdi80AaiXwp-wPv3uDD0s6WtNgpZrGXMTs7eXX20qu7k1d3L73-46nIaOhlN9B_XYc9nRfVK5pvcZCjquhMycrIzGVqeKZR06BnVMxF1BnI_OBdsvgr-dUW2b5Pdp6i7D6F7D2KXGye_QwAAP__qyUQHg==
+
+query T
+SELECT url FROM [EXPLAIN (DISTSQL) SELECT * FROM outer_p1 RIGHT OUTER JOIN outer_gc1 USING (pid1) WHERE pid1 >= 1 AND pid1 <= 20]
+----
+https://cockroachdb.github.io/distsqlplan/decode.html#eJzUVO9rnEAQ_d6_YplPsZ0SVy8tCAeGxiaGq6aeoYVUirgTKxjX7q6l4bj_vbheSS5Nf10-3Tdn3rx5vgezK9BfWwhgGS2iNzkbVMveZuk7dhV9vFgcxwk7OImX-fL9wmGbkefTgBwMqc89Z1l8epaz8zRONr264uxyGSen7KBvBHfYh7Moi6aCfRpc16c54w47Tk7uN6s581ynAIROCkrKG9IQXAEHBA8QfECYQYHQK1mR1lKN8MoOx-I7BC5C0_WDGdsFQiUVQbAC05iWIIC4M6RaKr9RRqUgdS6bjtShCwiCTNm0Vm1B1wZGjeamVLfhT5OAkDX1l1-huhqxaRcg5Lc9BZtE0ss8ymwugNDStTkI-QtnrsY99hMQ0sEELPQx9DCcYXiE4SsMX0OxRpCDuTOjTVkTBHyNvzF853PopBKkSGwZK9aPRJLIl7I_nD0YfFza25LmO2XN9zdrbyfD3v4a9ncy7O-v4b88HxnpXnaa_ulY3PHaSNQ0naaWg6roQsnKykxlanm2IUibCeVTEXcWsj94n8z_SD7aIrsPyd5TlP2nkGf_RS7Wz34EAAD__3H4Fpg=
+
+########################
+# Non-interleaved joins #
+########################
+
+# Join on siblings uses merge joiner.
+# TODO(richardwu): Update this once sibling joins are implemented.
+query T
+SELECT url FROM [EXPLAIN (DISTSQL) SELECT * FROM child1 JOIN child2 USING(pid1)]
+----
+https://cockroachdb.github.io/distsqlplan/decode.html#eJy8lk1v2zgQhu_7K4jZS7KhQZH6iC1gAS22aeEgsdM4BQoEPigWawtwJJeSgQaB_3shK20Sf3CoEtKNkvho-HKewzxD8X0JIUwuri7-vyNrtSQfb8fX5P7i683Vf8MROfkwnNxNPl-dkpct_9QbZot0mXByOR6O6rUgXybD0SdyskoTfjoFClmeyFH8KAsI74EDBQEUXKDgAQUfphRWKp_JoshVteV5CwyTHxA6FNJstS6r11MKs1xJCJ-hTMulhBDu4oelvJVxIhVzgEIiyzhdbsusVPoYq6eoPh5QmKzirAhJjwn2N_MDxpkn6nWfcSZInCXEJXm5kKqA6YZCvi5fKr8WfHgii7hYvC8VcZhuphSKMp5LCPmG_lkCX5NAdJlAHE3w-p9cJVLJZPc_Z1Vho10HLuNaqrm8zNNMKsZ3-rmU38qTiJ-d_qvS-aJeAoXxugxJxGkkaOTSyKdRQKPznfSvyVyDZOvs0KkPHniU9_IV4_7OzsO1vXe1ubkX3MzsI1r0mFet_eq915blDdIEZpZ3m0YcTdOh8bx944V5n4ShdW_60WPB76YF9bpqWtCWdQ3SnBta12kacTRNh9aJ9q1zzfvkGlp3uDU91m_LtQYZ-oaudZBBHM3QoWFu-4Z55t3xDA3r9xh3fnXId14eqhZxpy3JGsQYGErWTQxxNEaHnnndTowHjnMri1WeFdJoHnSqQDKZy_qainytZvJG5bNtmfpxvOW2E0kii7L-KuqHYVZ_qg5oDgc28MAG5lbn5r6e5g2uTDSDAxt4YANzq3PvXNkeLXZp5y3t6u_b1cL8_Z05u7RnI7geRgTXw4jgehgTHKERwX0bwfUwIrgeRgTXw5jgCI0IHtgIfm6jqB5GFNXDiKJ6GFMUoRFF-zaK6mFEUT2MKKqHMUURGlF0YKMot5oTEBqRFKERSxEa0xTDsVnBbliwmxbsxgXLecFuYOBWEwPfGxka2aqnMVv1NGarnkZtRXDM1ibD0n7PmkxLTWnM1kbzUmMcs3VveNDaOt389TMAAP__xGu2hQ==
+
+# Join on non-interleaved tables (with key) uses merge joiner.
+query T
+SELECT url FROM [EXPLAIN (DISTSQL) SELECT * FROM parent1 JOIN parent2 ON pid1=pid2]
+----
+https://cockroachdb.github.io/distsqlplan/decode.html#eJy8lVFr2z4Uxd__n0Lc_0u7KsiSHdc1FDy2DlLapGv6MCh-cOO7xJBanuzASsl3H46zpQmJ5CCcp0i2fr4651xy36H8NYcQxjd3N1-eyELNybfH0T15vvnxcPd5MCRnXwfjp_H3u3OyPvKpOVAkCvOKk9vRYLjeCDIakiJLObmuf0QMFHKZ4jB5xRLCZ-BAQQAFFyh4QKEPMYVCyQmWpVT1kfcVMEh_Q-hQyPJiUdWPYwoTqRDCd6iyao4QwlPyMsdHTFJUzAEKKVZJNl-VKVT2mqi3aH1FoDAukrwMSY8J9j_r-4wzTzTrgHEmSJKnxCWymqEqIV5SkItqXXpT8eWNzJJytl0r4hAvYwpllUwRQr6kByRsviNVigrT3e9c1IU3pxb5vnOrWrtW3KOa4q3MclTM3_7sHH9WZxG_OL9W2XTWLIHCaFGFJOI0EjRyaeTtaN7ocVvoOeKmQ9mTBeN85-T-2t5Wbd6-HXjLdjjQDT3m1et-_dzrqjX46VvjssvWEO3jEW3j-RBDj_n_svKbdZ2V31U84vTxBF3G47aPx20bz_5EeizoKhT39KFcdRmK1z4Ur20oQY9x528wfWe9qZPhTle5HKGjr9MhPkxqq-uJg9c7Udtw51RjeM9FHrEsZF5iqyHr1FIwnWLjTikXaoIPSk5WZZrtaMWtZlaKZdW8XW8GefOqvmB72LOBfRs4sIG5QTTfpZ2PtNDDQgvzbdrZpV2bsPSwISw9bAhLDxvCMmg2iPZswurb2K2HDXbrYYPdethgt0GzQbRvY_eljd162GC3HjbYrYcNdhs0G0QHNnZf2dithw1262GD3XrYYLdBs-mf_5hhKY6kPSvat6IDK5qbhB83MePlf38CAAD___svEUg=
+
+# Join on non-interleaved column uses hash joiner.
+query T
+SELECT url FROM [EXPLAIN (DISTSQL) SELECT * FROM parent1 JOIN child1 ON pa1 = ca1]
+----
+https://cockroachdb.github.io/distsqlplan/decode.html#eJy8ll1r2zAUhu_3K8TZTTsUZMkfTQwFj61jKV3SNb0YFF-4sdYEUtuTHVgp-e_DcbY2H9WRJ5w7O9Fj6dV5Lt5nKH8tIITJxdXFp1uyVAvy5Wb8jdxd_Li--jgckZPPw8nt5PvVKdks-dAsKBIls4qTy_FwRKaz-SLlZDwiRcLJOZkmPAYKWZ7KUfIoSwjvgAMFARRcoOABBR9iCoXKp7Isc1UveV4Dw_Q3hA6FeVYsq_rnmMI0VxLCZ6jm1UJCCLfJ_ULeyCSVijlAIZVVMl-stynU_DFRT9HmfEBhUiRZGZIeE-w98wPGmSea5z7jTJAkS4lL8momVQnxikK-rDZbv-x4_0RmSTnb3isSEK9iCmWVPEgI-Yr-XwT_cITmVrtN4G4lEG8mePnOMstVKpVMt74U1yS25MA1fE3K2WU-z6RifGeSC_mzOonE6bmaP8yqk8g9BQrjZRWSiNNI0MilkUcjfyfxSxrXIs2Bo47yXl4w7u_mPri3t7U3N3eBG-r8hgs95tXPfv2715XaLeIEZmp3nUanOT-y5rxTzYX5bISpaq-G0GPBv0kFzXM9qaAr1VrEOTNUreM0OtXEkVUTnarmms_GNVXt8Dx6rN-VYC1C9A0F6ySDTiv3yFq5nWrlmU_EM9Wq32Pc-TsW39m81HPhTldmtcgxMDSrqxg6ubwjy-UdrQUeOMiNLIs8K6VRx3PqKDJ9kM3VlPlSTeW1yqfrbZrX8Zpbl4xUllXzr2hehlnzV31AcziwgQc2MLc6N_f1NG9xZaIdHNjAAxuYW51758r2aLFLO69pV3_frhbm23fm7NKejeB6GBFcDyOC62FMcIRGBPdtBNfDiOB6GBFcD2OCIzQieGAj-JmNonoYUVQPI4rqYUxRhEYU7dsoqocRRfUwoqgexhRFaETRgY2i3KonIDQiKUIjliI0pimGY13BrizYtQW7umDZF-wKA7dqDHyvMrSyVU9jtuppzFY9jdqK4JitbcrS_szatKW2NGZrq77UGsds3SsPWlvj1bs_AQAA___1lbKo
+
+# Prefix join on interleaved columns uses merge joiner.
+query T
+SELECT url FROM [EXPLAIN (DISTSQL) SELECT * FROM child2 JOIN grandchild2 USING(pid1, cid2)]
+----
+https://cockroachdb.github.io/distsqlplan/decode.html#eJzElt9v2joUx9_vX2Gd-9LeGiV2fhQiXSlXd91E1UJXOmlSxUNKPIhEE-YEaVXF_z6FsNFC8IlnEd6S4A_295yPpfMK-fc5BDC6urn6_4Es5Zx8vB_ekserr3c3__UH5OxDf_Qw-nxzTjZL_qkWTGbJPObketgfkKmM0njz4cuoP_hEzhZJzCiZJDE_HwOFNIvFIHoWOQSPwIACBwoOUHCBggdjCguZTUSeZ7Jc8roG-vEPCGwKSbpYFuXnMYVJJgUEr1AkxVxAAA_R01zciygW0rKBQiyKKJmvt1nI5DmSL2F1MKAwWkRpHpCOxa2_Lc-3mOXy6rlrMYuTKI2JQ7JiJmQO4xWFbFlsdt5u-PRCZlE-e79VyGjIYbwaU8iLaCogYCv6ZyG8-hBvStxyEn4wyfavMhkLKeLdv7qgIb8o92-8sqY4t0JOxXWWpEJabKfFc_GtONvQ5__KZDrbvgKF4bIIyDoRDR0aujS8pGGXhr2dmmzDOg3CLtO6ELVnH2SdbGExb2dl_d7uu71Zc2VYM-8PyNKx3PLZK7-7R7wDGoF8jTvQeip-MNUJ7gNr9T7w5i3kDZ1806WO5f9upV89l630j-ikRqBLHSfbTsUPpjqBk7xVJ53mLXQaOlnfsI7VPaKJGjG6Oia2k4UfzHIC_5xW_XObN85t6F-3YzH7V988e_NSNo7ZR1RQI0lPR8HW4vCDcU5goXuySbXmZPciX2RpLhrNoXaZTcRTUVUuz5ZyIu5kNllvU70O19x6_IlFXlS_8uqln1Y_lQdsDvsmcM8EZkbnZp6aZhol43qwbwL3TGBmdO6dku3RfJe239KOut6OEmbva2bv0q6J4GoYEVwNI4KrYUxwhEYE90wEV8OI4GoYEVwNY4IjNCK4byL4pYmiahhRVA0jiqphTFGERhTtmiiqhhFF1TCiqBrGFEVoRNGeiaLMaE5AaERShEYsRWhMUwzHZgWzYcFsWjAbFwznBbOBgRlNDGxvZNCyVU1jtqppzFY1jdqK4JitOsPSfs90piVdGrNVa17SxjFb94YHpa3j1V8_AwAA__-sid2f
+
+# Subset join on interleaved columns uses hash joiner.
+query T
+SELECT url FROM [EXPLAIN (DISTSQL) SELECT * FROM child2 JOIN grandchild2 USING(pid1, cid3)]
+----
+https://cockroachdb.github.io/distsqlplan/decode.html#eJzElk1v2zgQhu_7K4jZS7KgIZH6iC1gAS22aesgtdM4BQoEOigWawtwJJeSgQaB_3shyWniL45YwupNlPiIfGeewzxD8X0BAUwury__vyMruSDvb8efyP3l15vr_4YjcvZuOLmbfL4-J5st_zQbpvN0kXByNR6OyEzGWbJ58WUyHH0gZ8s0YZRM08Q5j4BClidiFD-KAoJ7YECBAwUHKLhAwYOIwlLmU1EUuay2PNfAMPkBgU0hzZarsnodUZjmUkDwDGVaLgQEcBc_LMStiBMhLRsoJKKM00V9zFKmj7F8CpuLAYXJMs6KgPQsbv1teb7FLJc3z32LWZzEWUIckpdzIQuI1hTyVbk5-fXAhycyj4v59lEho6ED0TqiUJTxTEDA1vT3QniHQ7wpccdJ-NEkr79aZblMhBTJ1s-iisS2HCjHx7iYX-VpJqTFdnq6EN_Ks_qO5__KdDZ_WQCF8aoMSL2iIaehS0Ofhn0aDnYK8JrMMUh24NqjvJcvLebt1uDg2e7W2ay9H6yd5EfM6Flu9exV790TCq8RyNcQvvNU_GiqLuRnncnP2_eLtxTwTUt6lv-rb37zXPXNP6GAGoEudATsOhU_mqoLAXlnAjrt--W0FPBwd3pW_4TaacTo62jXTRZ-NEsXsjmdyea275LbUrZ-z2L2S5M8e7OousTsE_qmkWSg41tncfjROF0o5_6R6fLApW5FscyzQrSaHe0qlkhmoilTka_kVNzIfFof0yzHNVePLIkoyuYrbxbDrPlUXbA97JvAAxOYGd2beWqaaZSM68G-CTwwgZnRvXdKtkfzXdp-SzvqejtKmG3XzN6lXRPB1TAiuBpGBFfDmOAIjQjumQiuhhHB1TAiuBrGBEdoRHDfRPALE0XVMKKoGkYUVcOYogiNKNo3UVQNI4qqYURRNYwpitCIogMTRZnRnIDQiKQIjViK0JimGI7NCmbDgtm0YDYuGM4LZgMDM5oY2N7IoGWrmsZsVdOYrWoatRXBMVt1hqX9nulMS7o0ZqvWvKSNY7buDQ9KW6P1Xz8DAAD__4Wj0Hs=
+
+# Multi-table staggered join uses interleaved joiner on the bottom join
+# and a lookup join on the higher join.
+query T
+SELECT url FROM[EXPLAIN (DISTSQL)
+  SELECT * FROM grandchild1
+  JOIN child1 USING (pid1, cid1)
+  JOIN parent1 USING (pid1)
+ORDER BY pid1
+]
+----
+https://cockroachdb.github.io/distsqlplan/decode.html#eJzUVU1r20wQvr-_YplT_GZKvJJsJ4LCto1bFFw7lVNoCToI7cRRq2jV1aq0BP_3IitNpGBLwQYX3zyaefx8zMLcQ_4jARfm48n43RUrdMLe-7OP7Hr85XLyxpuyo3NvfjX_NOmxh5H_q4GFDlMZ3caJ5Oxi5k3Zw-_Pc2_6gR1lseTIoljyXtXOQk2pafR7bOafj3329isrywAQUiVpGt5RDu41cECwAMEGBAcQBhAgZFpFlOdKlyP3K4Anf4HbR4jTrDDl5wAhUprAvQcTm4TABS81pBMKf5JPoSR9oeKU9EkfECSZME5WjBO6MVByxHeh_i1qHgHBjxe39e5jo_ovQEjoxhwJfozCOu691uX8YwkIs8K4THAUFgobhYNigGKIYgTBEkEV5kl-bsIFgcuX-HKLpYzK3Mmgaeuv4ocdAMJEqe9Fxr6pOGUqLVWt1TdCcbZRnLVR3JMmpSVpkk05gh9DsFzjYKpeqeyEN5eyid5u0POt1s8Paf0dFmvrH-5__dZW-VuHlH-HxVr-o_3nb2-Vv31I-XdYrOV_uv_8na3ydw4p_w6LtfzP_u35WSPOpzxTaU4vuiz98jaRXFB1y3JV6IgutYpWNFU5W-FWHyTlpuryqvDSqlUKrIN5K9hqgPlzsNXO3EFtt6KddrCzi-5BK3jYzjzchXnUCj5tZz7dhfmsfVf9jmfS_siecwfL__4EAAD__7LjvSk=
+
+# Multi-table join with parent1 and child1 at the bottom uses interleaved
+# joiner but induces a hash joiner on the higher join.
+query T
+SELECT url FROM [EXPLAIN (DISTSQL)
+  SELECT * FROM parent1
+  JOIN child1 USING (pid1)
+  JOIN grandchild1 USING (pid1, cid1)
+]
+----
+https://cockroachdb.github.io/distsqlplan/decode.html#eJzUll2P4jYUhu_7K9zTm5nWyLHzsRCpUqp22rKisIVZqdIqF1nihUjZhDqh6mjEf69CmBI-xmeCRSTuCPZj-9jPkd5nKP5OwYfZw-jh50eyVin5dTr5g3x6-OvD6KfhmNz9Mpw9zv4c3ZPdlO_rCatIyazk5P1kOCbzZZLGnHycDce_kbtVEvP7emChoiw-HaVkXs0JgUKWx3IcfZUF-J-AAwUBFGyg4AAFF0IKK5XPZVHkqpryvAWG8b_gWxSSbLUuq79DCvNcSfCfoUzKVIIPw6yUKpXRP3Iqo1iq93mSScUsoBDLMkrS7Y4j-aWEao_ka6Segl1VQGGaLJbNkboIoFCvAxRS-aW8C_gP9z-qau72J1CYrEufBJwGggY2DRwauBBuKOTrcnfY_Rk_P5FlVCwPj1SxDoSbkEJRRgsJPt_Qt9f9GH1OdyUz93Dll1oarwIUZqsoK3zSY4J9x1yPceYIJti344-jEXP7jDNBoiwmNsnLpVRF-2rEQTXi1Wr2S62zXMVSyfhgsbAisSlnruT3qFjunp8fvf_uEWng7J-RBuLgIZ3tW7o06NNgcFT9vizboKwzZx7nvXzFuHt8AWf3dg725hc1Br_5xkDqbjaG16IxNH3RY0415lZjzhWbhHfcJLybJhEXiSpuXlSk7qao79qI2pCxx7z_rfWY17TWu6KoomNRRTei2heJat-8qEjdTVH7bUR93c0e619RT7tjPe1u9HQu0tO5eT2Rupt6Dtro2e8xbr0o6lrVR8NRbl3RUKdjQ53u4_CZE01lscqzQr4p7FpVTTJeyPqOinyt5vKDyufbberPyZbbBqdYFmU9KuqPYVYPVQd8O-yZwAMTmBudm7t6mre4MtEO9kzggQnMjc59dGUntDimrSZt6-_b1sL88M6sY9oxEVwPI4LrYURwPYwJjtCI4K6J4HoYEVwPI4LrYUxwhEYE90wEf2eiqB5GFNXDiKJ6GFMUoRFF-yaK6mFEUT2MKKqHMUURGlF0YKIoN8oJCI1IitCIpQiNaYrhWFYwCwtmacEsLhjmBbPAwI0SAz-JDK1s1dOYrXoas1VPo7YiOGZrm7B0-mZt0lJbGrO1VV5qjWO2noQHra3h5pv_AgAA___wPy5O
+
+# If there are Limits, interleaved joins should not be used.
+query T
+SELECT url FROM [
+  EXPLAIN (DISTSQL) SELECT * FROM (SELECT * FROM parent1 ORDER BY pid1 LIMIT 2) AS parent1 INNER MERGE JOIN child1 USING(pid1)
+]
+----
+https://cockroachdb.github.io/distsqlplan/decode.html#eJy8lV1v2joYx-_Pp7CecwOnRo6dhJdIR0q3sioVLx0waVOVi5R4EIkmmROkVRXffQqhL1Bqh1nhzgb_bD__n5XnCbJfK3Bg2h_0P8_QWqzQl8l4iO76328Hl94INa686Wz6ddBEuyX_lQsa-9M0EDzOKRpPrvoT9OkHSqOQooE39GaINdHl9GWFNxr1J2jYn1z30c3YG6H5MlqFFH2beqNr1Ci4pg8Y4iTko-CBZ-DcAQUMDDCYgMECDDb4GFKRzHmWJaJY8rQFvPA3OAaGKE7XefGzj2GeCA7OE-RRvuLgwCy4X_EJD0IuiAEYQp4H0Wp7TCqih0A8uru7AoZpGsSZg1qAYRA9RDli4G8wJOt8d8DrvvePaBlky_0dXQr-xseQ5cGCg0M3-O8uSo9ftMzuzT0JI_8Su00osVg57hJKGAriEJkoyZdcZFoVsA8reN1nHSci5IKHezv5Bfm85NgCcOlFedZhEkMuFvwmiWIuSHufWfGfecOlF83_RbRYlkPAMF7nDnIpdhl2LezaBzW_1mNq1HPkpqOklaSE0sPKj55t7Z1Nq78GVu01fPAYWsQqxnbxu1XXy6DnfxmdOl8Gq27HrGjnjYUWab-oapfjQlW7Ljvs_Ha6ddoxq9uxKto5LqRFunU5Mc_vpFenE6u6E7uik26LUOPZi23sJoUYatSlxTq_Fmqcq8cduciEZ2kSZ7xSBzOKUni44GU6WbIWc34rkvn2mHI63nLbjhDyLC__ZeXEi8u_igtWh20duKMD93RgSuU0PSExdhps68AdHbinAx8k9o5mh7TxljblcZtSmO7nbRzSlo4sOayQJYcVsuSwQpYcVsmydWS1deKWw4q45bAibjmsiFsOq-Lu6MTd1YlbDivilsOKuOWwIm45rIq7pxM3PaVZvv-GntItT6VVH_9T-uWptCpz-q57SEP3N__8CQAA__-JnSC4
+
+query T
+SELECT url FROM [
+  EXPLAIN (DISTSQL) SELECT * FROM parent1 INNER MERGE JOIN (SELECT * FROM child1 ORDER BY pid1 LIMIT 10) AS child1 USING(pid1)
+]
+----
+https://cockroachdb.github.io/distsqlplan/decode.html#eJy8lVtvozoQx9_Pp7DmvDSnjoy55IJ0pPScshVVLl2SlXZV8UCDN0GiwBoibVXlu68I6aahqU3XIm8Gz88z8_-PNM-Q_4jBhrkzdv5foA2P0SdvNkH3zte78ZU7RRfX7nwx_zzuoH3IP1VAFnCWFBS506njoYnj3TjodlYCx3HLdRSHFM28a8dD_31DWRRSNHYn7gJRrYOu5i8RX-bu9AZdlPcdHzAkacimwSPLwb4HChh0wGAABhMwWOBjyHi6ZHme8jLkeQe44U-wNQxRkm2K8rePYZlyBvYzFFERM7BhETzEzGNByDjRAEPIiiCKd2kyHj0G_Gm0bw4wzLMgyW3UJTr5m1g9QompV-cBoURHQRIiA6XFmvEc_C2GdFPsUx8yPjyhdZCvj3ONKPhbH0NeBCsGNt3iP2vBOt1CpeqrDgDDOHqMCkQ1pUL1dws9vJPykHEW1t-5LBMfojbJqbhdrnrDE8ZX7DaNEsZJ7_jZmH0vLkb0svMvj1br6ggYZpvCRiOKRzoemXhk1Xo-9GM06OcDlU7TbpoRSmuRp3ObR7lpc9Npw7l9Z2y7xCzPVvnfbGuG6flHo9_maOjN7dGb2vPKhi7p_faqV51Lr3pt2aOf355Bm_YYze0xmtpz2pEuGbRlinF-U4ZtmmI2N8VsasqgS6j2Yoyl7T9KZ6jWli_m-X2h2rn23IlCPJZnaZKzRltMK1th4YpV6uTphi_ZHU-XuzTV52zH7ZZCyPKiutWrDzeprsoCm8OWCtxXgYcqMKVimn5AMf1jsKUC91XgoQpcU-wNrddp7TVtiOU2hDA91lur06bKeIthyXiLYcl4i2HJeIth2XhbKmb1VOQWwxK5xbBEbjEskVsMy-Tuq8g9UJFbDEvkFsMSucWwRG4xLJN7qCI3VVqWEloiuISWKC6hJZJLaOnCfLM9hKL7279-BQAA___BmiKQ
