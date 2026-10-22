@@ -67,26 +67,7 @@ target_include_directories(roach
   PRIVATE protos
 )
 
-add_library(roachccl
-  ccl/crypto_utils.cc
-  ccl/ctr_stream.cc
-  ccl/db.cc
-  ccl/key_manager.cc
-  protosccl/ccl/baseccl/encryption_options.pb.cc
-  protosccl/ccl/storageccl/engineccl/enginepbccl/key_registry.pb.cc
-  protosccl/ccl/storageccl/engineccl/enginepbccl/stats.pb.cc
-)
-target_include_directories(roachccl
-  PUBLIC ./ccl/include
-  PRIVATE .. # CryptoPP headers are directly in the directory. Include .. to be able to include <cryptopp/....h>
-  PRIVATE ../protobuf/src
-  PRIVATE ../rocksdb/include
-  PRIVATE protos
-  PRIVATE protosccl
-)
-target_link_libraries(roachccl roach)
-
-set_target_properties(roach roachccl PROPERTIES
+set_target_properties(roach PROPERTIES
   CXX_STANDARD 11
   CXX_STANDARD_REQUIRED YES
   CXX_EXTENSIONS NO
@@ -95,18 +76,14 @@ set_target_properties(roach roachccl PROPERTIES
 
 enable_testing()
 
-# List of tests to build and run. Tests in `ccl/` are linked against roachccl, all others
-# are linked against roach only.
+# List of tests to build and run. CCL tests were removed with the
+# proprietary tree; everything here links against roach only.
 set(tests
   chunked_buffer_test.cc
   db_test.cc
   encoding_test.cc
   file_registry_test.cc
   merge_test.cc
-  ccl/crypto_utils_test.cc
-  ccl/db_test.cc
-  ccl/encrypted_env_test.cc
-  ccl/key_manager_test.cc
 )
 
 # "test" doesn't depend on the actual tests. Let's add a "check" target
@@ -134,22 +111,8 @@ foreach(tsrc ${tests})
     set(tname ${dirname}_${filename})
   endif()
 
-  if(${tsrc} MATCHES "^ccl/")
-    # Link `ccl/` tests against roachccl and CryptoPP.
-		# Use ccl/testutils.
-    add_executable(${tname} ${tsrc} testutils.cc ccl/testutils.cc)
-    target_link_libraries(${tname}
-      roachccl
-      ${CRYPTOPP_LIB}
-    )
-    target_include_directories(${tname}
-      PRIVATE .. # CryptoPP headers are directly in the directory. Include .. to be able to include <cryptopp/....h>
-      PRIVATE protosccl
-    )
-  else()
-		# Use testutils.
-    add_executable(${tname} ${tsrc} testutils.cc)
-  endif()
+  # Use testutils.
+  add_executable(${tname} ${tsrc} testutils.cc)
 
 	# Set includes/libraries/properties.
   target_include_directories(${tname}
