@@ -1163,7 +1163,7 @@ bin/.go_protobuf_sources: $(PROTOC) $(GO_PROTOS) $(GOGOPROTO_PROTO) $(ERRORS_PRO
 	$(SED_INPLACE) -E \
 		-e '/import _ /d' \
 		-e 's!import (fmt|math) "github.com/podomy/tardigrade/pkg/(fmt|math)"! !g' \
-		-e 's!github\.com/cockroachdb/cockroach/pkg/(etcd)!go.etcd.io/\1!g' \
+		-e 's!github\.com/podomy/tardigrade/pkg/(etcd)!go.etcd.io/\1!g' \
 		-e 's!github.com/podomy/tardigrade/pkg/((bytes|encoding/binary|errors|fmt|io|math|github\.com|(google\.)?golang\.org)([^a-z]|$$))!\1!g' \
         -e 's!github.com/podomy/tardigrade/pkg/errorspb!github.com/cockroachdb/errors/errorspb!g' \
 		-e 's!golang.org/x/net/context!context!g' \
