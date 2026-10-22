@@ -483,8 +483,6 @@ CGO_PKGS := \
 	pkg/cli \
 	pkg/server/status \
 	pkg/storage/engine \
-	pkg/ccl/storageccl/engineccl \
-	pkg/ccl/gssapiccl \
 	vendor/github.com/knz/go-libedit/unix
 vendor/github.com/knz/go-libedit/unix-package := libedit_unix
 CGO_UNSUFFIXED_FLAGS_FILES := $(addprefix ./,$(addsuffix /zcgo_flags.go,$(CGO_PKGS)))
