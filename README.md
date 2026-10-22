@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./assets/tardigrade.png" alt="Tardigrade" width="15%">
+</p>
+
 <h1 align="center">Tardigrade</h1>
 
 Tardigrade is a distributed SQL database, developed in the open. It is
