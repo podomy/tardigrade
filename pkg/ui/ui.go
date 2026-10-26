@@ -24,11 +24,11 @@ import (
 	"net/http"
 	"os"
 
+	assetfs "github.com/elazarl/go-bindata-assetfs"
+	"github.com/pkg/errors"
 	"github.com/podomy/tardigrade/pkg/base"
 	"github.com/podomy/tardigrade/pkg/build"
 	"github.com/podomy/tardigrade/pkg/util/log"
-	assetfs "github.com/elazarl/go-bindata-assetfs"
-	"github.com/pkg/errors"
 )
 
 // Asset loads and returns the asset for the given name. It returns an error if
@@ -40,11 +40,11 @@ var Asset func(name string) ([]byte, error)
 //
 // For example, if the embedded filesystem contains the following hierarchy:
 //
-//     data/
-//       foo.txt
-//       img/
-//         a.png
-//         b.png
+//	data/
+//	  foo.txt
+//	  img/
+//	    a.png
+//	    b.png
 //
 // AssetDir("") returns []string{"data"}
 // AssetDir("data") returns []string{"foo.txt", "img"}
@@ -68,7 +68,7 @@ func haveUI() bool {
 var indexHTMLTemplate = template.Must(template.New("index").Parse(`<!DOCTYPE html>
 <html>
 	<head>
-		<title>Cockroach Console</title>
+		<title>Tardigrade</title>
 		<meta charset="UTF-8">
 		<link href="favicon.ico" rel="shortcut icon">
 	</head>
@@ -98,8 +98,8 @@ type indexHTMLArgs struct {
 // bareIndexHTML is used in place of indexHTMLTemplate when the binary is built
 // without the web UI.
 var bareIndexHTML = []byte(fmt.Sprintf(`<!DOCTYPE html>
-<title>CockroachDB</title>
-Binary built without web UI.
+<title>Tardigrade</title>
+Tardigrade has no UI.
 <hr>
 <em>%s</em>`, build.GetInfo().Short()))
 

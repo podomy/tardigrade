@@ -26,6 +26,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/gogo/protobuf/jsonpb"
+	"github.com/gogo/protobuf/proto"
+	"github.com/pkg/errors"
 	"github.com/podomy/tardigrade/pkg/base"
 	"github.com/podomy/tardigrade/pkg/build"
 	"github.com/podomy/tardigrade/pkg/config"
@@ -46,9 +49,6 @@ import (
 	"github.com/podomy/tardigrade/pkg/util/log"
 	"github.com/podomy/tardigrade/pkg/util/timeutil"
 	"github.com/podomy/tardigrade/pkg/util/uuid"
-	"github.com/gogo/protobuf/jsonpb"
-	"github.com/gogo/protobuf/proto"
-	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -834,7 +834,7 @@ func TestServeIndexHTML(t *testing.T) {
 	const htmlTemplate = `<!DOCTYPE html>
 <html>
 	<head>
-		<title>Cockroach Console</title>
+		<title>Tardigrade</title>
 		<meta charset="UTF-8">
 		<link href="favicon.ico" rel="shortcut icon">
 	</head>
@@ -893,8 +893,8 @@ func TestServeIndexHTML(t *testing.T) {
 			}
 			respString := string(respBytes)
 			expected := fmt.Sprintf(`<!DOCTYPE html>
-<title>CockroachDB</title>
-Binary built without web UI.
+<title>Tardigrade</title>
+Tardigrade has no UI.
 <hr>
 <em>%s</em>`,
 				build.GetInfo().Short())
