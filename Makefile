@@ -51,10 +51,10 @@ TESTS := .
 ## Benchmarks to run for use with `make bench`.
 BENCHES :=
 
-## Space delimited list of logic test files to run, for make testlogic/testccllogic/testoptlogic.
+## Space delimited list of logic test files to run, for make testlogic/testoptlogic.
 FILES :=
 
-## Name of a logic test configuration to run, for make testlogic/testccllogic/testoptlogic.
+## Name of a logic test configuration to run, for make testlogic/testoptlogic.
 ## (default: all configs. It's not possible yet to specify multiple configs in this way.)
 TESTCONFIG :=
 
@@ -124,7 +124,6 @@ help: ## Print help for targets with comments.
 		"make test PKG=./pkg/sql/parser TESTS=TestParse" "Run the TestParse test in the ./pkg/sql/parser package." \
 		"make bench PKG=./pkg/sql/parser BENCHES=BenchmarkParse" "Run the BenchmarkParse benchmark in the ./pkg/sql/parser package." \
 		"make testlogic" "Run all OSS SQL logic tests." \
-		"make testccllogic" "Run all CCL SQL logic tests." \
 		"make testoptlogic" "Run all opt exec builder SQL logic tests." \
 		"make testbaselogic" "Run all the baseSQL SQL logic tests." \
 		"make testlogic FILES='prepare fk'" "Run the logic tests in the files named prepare and fk." \
@@ -438,7 +437,6 @@ LIBROCKSDB  := $(ROCKSDB_DIR)/librocksdb.a
 LIBSNAPPY   := $(SNAPPY_DIR)/libsnappy.a
 LIBEDIT     := $(LIBEDIT_DIR)/src/.libs/libedit.a
 LIBROACH    := $(LIBROACH_DIR)/libroach.a
-LIBROACHCCL := $(LIBROACH_DIR)/libroachccl.a
 LIBKRB5     := $(KRB5_DIR)/lib/libgssapi_krb5.a
 PROTOC 		 := $(PROTOC_DIR)/protoc
 
@@ -447,11 +445,9 @@ C_LIBS_COMMON = \
 	$(if $(target-is-windows),,$(LIBEDIT)) \
 	$(LIBPROTOBUF) $(LIBSNAPPY) $(LIBROCKSDB)
 C_LIBS_OSS = $(C_LIBS_COMMON) $(LIBROACH)
-C_LIBS_CCL = $(C_LIBS_COMMON) $(LIBCRYPTOPP) $(LIBROACHCCL)
 
 # We only include krb5 on linux, non-musl builds.
 ifeq "$(findstring linux-gnu,$(TARGET_TRIPLE))" "linux-gnu"
-C_LIBS_CCL += $(LIBKRB5)
 KRB_CPPFLAGS := $(KRB5_DIR)/include
 KRB_DIR := $(KRB5_DIR)/lib
 override TAGS += gss
@@ -627,9 +623,6 @@ $(LIBEDIT_DIR)/Makefile: $(C_DEPS_DIR)/libedit-rebuild $(LIBEDIT_SRC_DIR)/config
 	@# $(C_DEPS_DIR)/libedit-rebuild. See above for rationale.
 	cd $(LIBEDIT_DIR) && $(LIBEDIT_SRC_DIR)/configure $(xconfigure-flags) --disable-examples --disable-shared
 
-# TODO(benesch): make it possible to build libroach without CCL code. Because
-# libroach and libroachccl are defined in the same CMake project, CMake requires
-# that the CCL code be present even if only the OSS target will be built.
 $(LIBROACH_DIR)/Makefile: $(C_DEPS_DIR)/libroach-rebuild | bin/.submodules-initialized bin/.cpp_protobuf_sources
 	rm -rf $(LIBROACH_DIR)
 	mkdir -p $(LIBROACH_DIR)
@@ -696,14 +689,12 @@ libroach-inputs := $(LIBROACH_SRC_DIR) $(ROCKSDB_SRC_DIR)/include $(PROTOBUF_SRC
 $(LIBROACH): $(LIBROACH_DIR)/Makefile bin/uptodate .ALWAYS_REBUILD
 	@uptodate $@ $(libroach-inputs) || $(MAKE) --no-print-directory -C $(LIBROACH_DIR) roach
 
-$(LIBROACHCCL): $(LIBROACH_DIR)/Makefile bin/uptodate .ALWAYS_REBUILD
-	@uptodate $@ $(libroach-inputs) || $(MAKE) --no-print-directory -C $(LIBROACH_DIR) roachccl
 
 $(LIBKRB5): $(KRB5_DIR)/Makefile bin/uptodate .ALWAYS_REBUILD
 	@uptodate $@ $(KRB5_SRC_DIR)/src || $(MAKE) --no-print-directory -C $(KRB5_DIR)
 
 # Convenient names for maintainers. Not used by other targets in the Makefile.
-.PHONY: protoc libcryptopp libjemalloc libprotobuf libsnappy librocksdb libroach libroachccl libkrb5
+.PHONY: protoc libcryptopp libjemalloc libprotobuf libsnappy librocksdb libroach libkrb5
 protoc:      $(PROTOC)
 libcryptopp: $(LIBCRYPTOPP)
 libedit:     $(LIBEDIT)
@@ -712,7 +703,6 @@ libprotobuf: $(LIBPROTOBUF)
 libsnappy:   $(LIBSNAPPY)
 librocksdb:  $(LIBROCKSDB)
 libroach:    $(LIBROACH)
-libroachccl: $(LIBROACHCCL)
 libkrb5:     $(LIBKRB5)
 
 PHONY: check-libroach
@@ -819,8 +809,8 @@ OPTGEN_TARGETS = \
 	pkg/sql/opt/rule_name.og.go \
 	pkg/sql/opt/rule_name_string.go
 
-go-targets-ccl := \
-	$(COCKROACH) $(COCKROACHSHORT) go-install \
+go-targets-oss := \
+	$(COCKROACHSHORT) go-install \
 	bench benchshort \
 	check test testshort testslow testrace testraceslow testbuild \
 	stress stressrace \
@@ -828,13 +818,13 @@ go-targets-ccl := \
 	generate \
 	lint lintshort
 
-go-targets := $(go-targets-ccl) $(COCKROACHOSS)
+go-targets := $(go-targets-oss) $(COCKROACHOSS)
 
 .DEFAULT_GOAL := all
 all: build
 
 .PHONY: c-deps
-c-deps: $(C_LIBS_CCL)
+c-deps: $(C_LIBS_OSS)
 
 build-mode = build -o $@
 
@@ -845,7 +835,7 @@ $(COCKROACHOSS): $(C_LIBS_OSS)
 
 $(COCKROACHSHORT): BUILDTARGET = ./pkg/cmd/cockroach-short
 
-$(go-targets-ccl): $(C_LIBS_CCL)
+$(go-targets-oss): $(C_LIBS_OSS)
 
 BUILDINFO = .buildinfo/tag .buildinfo/rev
 BUILD_TAGGED_RELEASE =
@@ -946,7 +936,7 @@ bench benchshort: TESTTIMEOUT := $(BENCHTIMEOUT)
 # that longer running benchmarks can skip themselves.
 benchshort: override TESTFLAGS += -benchtime=1ns -short
 
-.PHONY: check test testshort testrace testlogic testbaselogic testccllogic testoptlogic bench benchshort
+.PHONY: check test testshort testrace testlogic testbaselogic testoptlogic bench benchshort
 test: ## Run tests.
 check test testshort testrace bench benchshort:
 	$(xgo) test $(GOFLAGS) -tags '$(TAGS)' -ldflags '$(LINKFLAGS)' -run "$(TESTS)" $(if $(BENCHES),-bench "$(BENCHES)") -timeout $(TESTTIMEOUT) $(PKG) $(TESTFLAGS)
@@ -969,20 +959,17 @@ roachprod-stress roachprod-stressrace: bin/roachprod-stress
 	    -test.run "$(TESTS)" $(filter-out -v,$(TESTFLAGS)) -test.v -test.timeout $(TESTTIMEOUT); \
 	fi
 
-testlogic: testbaselogic testoptlogic testccllogic
+testlogic: testbaselogic testoptlogic
 
 testbaselogic: ## Run SQL Logic Tests.
 testbaselogic: bin/logictest
 
-testccllogic: ## Run SQL CCL Logic Tests.
-testccllogic: bin/logictestccl
 
 testoptlogic: ## Run SQL Logic Tests from opt package.
 testoptlogic: bin/logictestopt
 
 logic-test-selector := $(if $(TESTCONFIG),^$(TESTCONFIG)$$)/$(if $(FILES),^$(subst $(space),$$|^,$(FILES))$$)/$(SUBTESTS)
 testbaselogic: TESTS := TestLogic/$(logic-test-selector)
-testccllogic: TESTS := TestCCLLogic/$(logic-test-selector)
 testoptlogic: TESTS := TestExecBuild/$(logic-test-selector)
 
 # Note: we specify -config here in addition to the filter on TESTS
@@ -991,8 +978,8 @@ testoptlogic: TESTS := TestExecBuild/$(logic-test-selector)
 # does not prevent loading and initializing every default config in
 # turn (including setting up the test clusters, etc.). By specifying
 # -config, the extra initialization overhead is averted.
-testbaselogic testccllogic testoptlogic: TESTFLAGS := -test.v $(if $(FILES),-show-sql) $(if $(TESTCONFIG),-config $(TESTCONFIG))
-testbaselogic testccllogic testoptlogic:
+testbaselogic testoptlogic: TESTFLAGS := -test.v $(if $(FILES),-show-sql) $(if $(TESTCONFIG),-config $(TESTCONFIG))
+testbaselogic testoptlogic:
 	cd $($(<F)-package) && $(<F) -test.run "$(TESTS)" -test.timeout $(TESTTIMEOUT) $(TESTFLAGS)
 
 testraceslow: override GOFLAGS += -race
@@ -1437,24 +1424,22 @@ bins = \
 testbins = \
   bin/logictest \
   bin/logictestopt \
-  bin/logictestccl
 
 # Mappings for binaries that don't live in pkg/cmd.
 execgen-package = ./pkg/sql/colexec/execgen/cmd/execgen
 langgen-package = ./pkg/sql/opt/optgen/cmd/langgen
 optgen-package = ./pkg/sql/opt/optgen/cmd/optgen
 logictest-package = ./pkg/sql/logictest
-logictestccl-package = ./pkg/ccl/logictestccl
 logictestopt-package = ./pkg/sql/opt/exec/execbuilder
 terraformgen-package = ./pkg/cmd/roachprod/vm/aws/terraformgen
-logictest-bins := bin/logictest bin/logictestopt bin/logictestccl
+logictest-bins := bin/logictest bin/logictestopt
 
 # Additional dependencies for binaries that depend on generated code.
 #
 # TODO(benesch): Derive this automatically. This is getting out of hand.
 bin/workload bin/docgen bin/execgen bin/roachtest $(logictest-bins): $(SQLPARSER_TARGETS) $(PROTOBUF_TARGETS)
 bin/workload bin/roachtest $(logictest-bins): $(EXECGEN_TARGETS)
-bin/roachtest $(logictest-bins): $(C_LIBS_CCL) $(CGO_FLAGS_FILES)
+bin/roachtest $(logictest-bins): $(C_LIBS_OSS) $(CGO_FLAGS_FILES)
 bin/roachtest bin/logictestopt: $(OPTGEN_TARGETS)
 
 $(bins): bin/%: bin/%.d | bin/prereqs bin/.submodules-initialized
