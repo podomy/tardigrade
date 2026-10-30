@@ -41,7 +41,7 @@ import (
 // where part of their value lies in the value part of the key/value
 // pair.
 //
-// See also: docs/tech-notes/encoding.md, EncodeTableValue().
+// See also: docs/tech-notes/encoding, EncodeTableValue().
 func EncodeTableKey(b []byte, val tree.Datum, dir encoding.Direction) ([]byte, error) {
 	if (dir != encoding.Ascending) && (dir != encoding.Descending) {
 		return nil, errors.Errorf("invalid direction: %d", dir)
@@ -353,7 +353,7 @@ func DecodeTableKey(
 // trip and decode exactly to its input, but is not guaranteed to be
 // lexicographically sortable.
 //
-// See also: docs/tech-notes/encoding.md, EncodeTableKey().
+// See also: docs/tech-notes/encoding, EncodeTableKey().
 func EncodeTableValue(
 	appendTo []byte, colID ColumnID, val tree.Datum, scratch []byte,
 ) ([]byte, error) {

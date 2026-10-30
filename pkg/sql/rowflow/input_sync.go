@@ -9,7 +9,7 @@
 // licenses/APL.txt.
 //
 // Input synchronizers are used by processors to merge incoming rows from
-// (potentially) multiple streams; see docs/RFCS/distributed_sql.md
+// (potentially) multiple streams; see docs/RFCS/distributed_sql
 
 package rowflow
 

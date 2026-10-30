@@ -24,7 +24,7 @@ import (
 	"github.com/podomy/tardigrade/pkg/util/leaktest"
 )
 
-// TestIndexBackfiller tests the scenarios described in docs/tech-notes/index-backfill.md
+// TestIndexBackfiller tests the scenarios described in docs/tech-notes/index-backfill
 func TestIndexBackfiller(t *testing.T) {
 	defer leaktest.AfterTest(t)()
 
@@ -76,7 +76,7 @@ func TestIndexBackfiller(t *testing.T) {
 	}
 
 	// The sequence of events here exactly matches the test cases in
-	// docs/tech-notes/index-backfill.md. If you update this, please remember to
+	// docs/tech-notes/index-backfill. If you update this, please remember to
 	// update the tech note as well.
 
 	execOrFail("CREATE DATABASE t")

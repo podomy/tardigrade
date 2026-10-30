@@ -1,0 +1,1199 @@
+Array functions
+
+
+Function → ReturnsDescription
+
+array_append(array: bool[], elem: bool) → bool[]Appends elem to array, returning the result.
+
+array_append(array: bytes[], elem: bytes) → bytes[]Appends elem to array, returning the result.
+
+array_append(array: date[], elem: date) → date[]Appends elem to array, returning the result.
+
+array_append(array: decimal[], elem: decimal) → decimal[]Appends elem to array, returning the result.
+
+array_append(array: float[], elem: float) → float[]Appends elem to array, returning the result.
+
+array_append(array: inet[], elem: inet) → inet[]Appends elem to array, returning the result.
+
+array_append(array: int[], elem: int) → int[]Appends elem to array, returning the result.
+
+array_append(array: interval[], elem: interval) → interval[]Appends elem to array, returning the result.
+
+array_append(array: string[], elem: string) → string[]Appends elem to array, returning the result.
+
+array_append(array: time[], elem: time) → time[]Appends elem to array, returning the result.
+
+array_append(array: timestamp[], elem: timestamp) → timestamp[]Appends elem to array, returning the result.
+
+array_append(array: timestamptz[], elem: timestamptz) → timestamptz[]Appends elem to array, returning the result.
+
+array_append(array: uuid[], elem: uuid) → uuid[]Appends elem to array, returning the result.
+
+array_append(array: oid[], elem: oid) → oid[]Appends elem to array, returning the result.
+
+array_append(array: varbit[], elem: varbit) → varbit[]Appends elem to array, returning the result.
+
+array_cat(left: bool[], right: bool[]) → bool[]Appends two arrays.
+
+array_cat(left: bytes[], right: bytes[]) → bytes[]Appends two arrays.
+
+array_cat(left: date[], right: date[]) → date[]Appends two arrays.
+
+array_cat(left: decimal[], right: decimal[]) → decimal[]Appends two arrays.
+
+array_cat(left: float[], right: float[]) → float[]Appends two arrays.
+
+array_cat(left: inet[], right: inet[]) → inet[]Appends two arrays.
+
+array_cat(left: int[], right: int[]) → int[]Appends two arrays.
+
+array_cat(left: interval[], right: interval[]) → interval[]Appends two arrays.
+
+array_cat(left: string[], right: string[]) → string[]Appends two arrays.
+
+array_cat(left: time[], right: time[]) → time[]Appends two arrays.
+
+array_cat(left: timestamp[], right: timestamp[]) → timestamp[]Appends two arrays.
+
+array_cat(left: timestamptz[], right: timestamptz[]) → timestamptz[]Appends two arrays.
+
+array_cat(left: uuid[], right: uuid[]) → uuid[]Appends two arrays.
+
+array_cat(left: oid[], right: oid[]) → oid[]Appends two arrays.
+
+array_cat(left: varbit[], right: varbit[]) → varbit[]Appends two arrays.
+
+array_length(input: anyelement[], array_dimension: int) → intCalculates the length of input on the provided array_dimension. However, because CockroachDB doesn’t yet support multi-dimensional arrays, the only supported array_dimension is 1.
+
+array_lower(input: anyelement[], array_dimension: int) → intCalculates the minimum value of input on the provided array_dimension. However, because CockroachDB doesn’t yet support multi-dimensional arrays, the only supported array_dimension is 1.
+
+array_position(array: bool[], elem: bool) → intReturn the index of the first occurrence of elem in array.
+
+array_position(array: bytes[], elem: bytes) → intReturn the index of the first occurrence of elem in array.
+
+array_position(array: date[], elem: date) → intReturn the index of the first occurrence of elem in array.
+
+array_position(array: decimal[], elem: decimal) → intReturn the index of the first occurrence of elem in array.
+
+array_position(array: float[], elem: float) → intReturn the index of the first occurrence of elem in array.
+
+array_position(array: inet[], elem: inet) → intReturn the index of the first occurrence of elem in array.
+
+array_position(array: int[], elem: int) → intReturn the index of the first occurrence of elem in array.
+
+array_position(array: interval[], elem: interval) → intReturn the index of the first occurrence of elem in array.
+
+array_position(array: string[], elem: string) → intReturn the index of the first occurrence of elem in array.
+
+array_position(array: time[], elem: time) → intReturn the index of the first occurrence of elem in array.
+
+array_position(array: timestamp[], elem: timestamp) → intReturn the index of the first occurrence of elem in array.
+
+array_position(array: timestamptz[], elem: timestamptz) → intReturn the index of the first occurrence of elem in array.
+
+array_position(array: uuid[], elem: uuid) → intReturn the index of the first occurrence of elem in array.
+
+array_position(array: oid[], elem: oid) → intReturn the index of the first occurrence of elem in array.
+
+array_position(array: varbit[], elem: varbit) → intReturn the index of the first occurrence of elem in array.
+
+array_positions(array: bool[], elem: bool) → int[]Returns and array of indexes of all occurrences of elem in array.
+
+array_positions(array: bytes[], elem: bytes) → int[]Returns and array of indexes of all occurrences of elem in array.
+
+array_positions(array: date[], elem: date) → int[]Returns and array of indexes of all occurrences of elem in array.
+
+array_positions(array: decimal[], elem: decimal) → int[]Returns and array of indexes of all occurrences of elem in array.
+
+array_positions(array: float[], elem: float) → int[]Returns and array of indexes of all occurrences of elem in array.
+
+array_positions(array: inet[], elem: inet) → int[]Returns and array of indexes of all occurrences of elem in array.
+
+array_positions(array: int[], elem: int) → int[]Returns and array of indexes of all occurrences of elem in array.
+
+array_positions(array: interval[], elem: interval) → int[]Returns and array of indexes of all occurrences of elem in array.
+
+array_positions(array: string[], elem: string) → int[]Returns and array of indexes of all occurrences of elem in array.
+
+array_positions(array: time[], elem: time) → int[]Returns and array of indexes of all occurrences of elem in array.
+
+array_positions(array: timestamp[], elem: timestamp) → int[]Returns and array of indexes of all occurrences of elem in array.
+
+array_positions(array: timestamptz[], elem: timestamptz) → int[]Returns and array of indexes of all occurrences of elem in array.
+
+array_positions(array: uuid[], elem: uuid) → int[]Returns and array of indexes of all occurrences of elem in array.
+
+array_positions(array: oid[], elem: oid) → int[]Returns and array of indexes of all occurrences of elem in array.
+
+array_positions(array: varbit[], elem: varbit) → int[]Returns and array of indexes of all occurrences of elem in array.
+
+array_prepend(elem: bool, array: bool[]) → bool[]Prepends elem to array, returning the result.
+
+array_prepend(elem: bytes, array: bytes[]) → bytes[]Prepends elem to array, returning the result.
+
+array_prepend(elem: date, array: date[]) → date[]Prepends elem to array, returning the result.
+
+array_prepend(elem: decimal, array: decimal[]) → decimal[]Prepends elem to array, returning the result.
+
+array_prepend(elem: float, array: float[]) → float[]Prepends elem to array, returning the result.
+
+array_prepend(elem: inet, array: inet[]) → inet[]Prepends elem to array, returning the result.
+
+array_prepend(elem: int, array: int[]) → int[]Prepends elem to array, returning the result.
+
+array_prepend(elem: interval, array: interval[]) → interval[]Prepends elem to array, returning the result.
+
+array_prepend(elem: string, array: string[]) → string[]Prepends elem to array, returning the result.
+
+array_prepend(elem: time, array: time[]) → time[]Prepends elem to array, returning the result.
+
+array_prepend(elem: timestamp, array: timestamp[]) → timestamp[]Prepends elem to array, returning the result.
+
+array_prepend(elem: timestamptz, array: timestamptz[]) → timestamptz[]Prepends elem to array, returning the result.
+
+array_prepend(elem: uuid, array: uuid[]) → uuid[]Prepends elem to array, returning the result.
+
+array_prepend(elem: oid, array: oid[]) → oid[]Prepends elem to array, returning the result.
+
+array_prepend(elem: varbit, array: varbit[]) → varbit[]Prepends elem to array, returning the result.
+
+array_remove(array: bool[], elem: bool) → bool[]Remove from array all elements equal to elem.
+
+array_remove(array: bytes[], elem: bytes) → bytes[]Remove from array all elements equal to elem.
+
+array_remove(array: date[], elem: date) → date[]Remove from array all elements equal to elem.
+
+array_remove(array: decimal[], elem: decimal) → decimal[]Remove from array all elements equal to elem.
+
+array_remove(array: float[], elem: float) → float[]Remove from array all elements equal to elem.
+
+array_remove(array: inet[], elem: inet) → inet[]Remove from array all elements equal to elem.
+
+array_remove(array: int[], elem: int) → int[]Remove from array all elements equal to elem.
+
+array_remove(array: interval[], elem: interval) → interval[]Remove from array all elements equal to elem.
+
+array_remove(array: string[], elem: string) → string[]Remove from array all elements equal to elem.
+
+array_remove(array: time[], elem: time) → time[]Remove from array all elements equal to elem.
+
+array_remove(array: timestamp[], elem: timestamp) → timestamp[]Remove from array all elements equal to elem.
+
+array_remove(array: timestamptz[], elem: timestamptz) → timestamptz[]Remove from array all elements equal to elem.
+
+array_remove(array: uuid[], elem: uuid) → uuid[]Remove from array all elements equal to elem.
+
+array_remove(array: oid[], elem: oid) → oid[]Remove from array all elements equal to elem.
+
+array_remove(array: varbit[], elem: varbit) → varbit[]Remove from array all elements equal to elem.
+
+array_replace(array: bool[], toreplace: bool, replacewith: bool) → bool[]Replace all occurrences of toreplace in array with replacewith.
+
+array_replace(array: bytes[], toreplace: bytes, replacewith: bytes) → bytes[]Replace all occurrences of toreplace in array with replacewith.
+
+array_replace(array: date[], toreplace: date, replacewith: date) → date[]Replace all occurrences of toreplace in array with replacewith.
+
+array_replace(array: decimal[], toreplace: decimal, replacewith: decimal) → decimal[]Replace all occurrences of toreplace in array with replacewith.
+
+array_replace(array: float[], toreplace: float, replacewith: float) → float[]Replace all occurrences of toreplace in array with replacewith.
+
+array_replace(array: inet[], toreplace: inet, replacewith: inet) → inet[]Replace all occurrences of toreplace in array with replacewith.
+
+array_replace(array: int[], toreplace: int, replacewith: int) → int[]Replace all occurrences of toreplace in array with replacewith.
+
+array_replace(array: interval[], toreplace: interval, replacewith: interval) → interval[]Replace all occurrences of toreplace in array with replacewith.
+
+array_replace(array: string[], toreplace: string, replacewith: string) → string[]Replace all occurrences of toreplace in array with replacewith.
+
+array_replace(array: time[], toreplace: time, replacewith: time) → time[]Replace all occurrences of toreplace in array with replacewith.
+
+array_replace(array: timestamp[], toreplace: timestamp, replacewith: timestamp) → timestamp[]Replace all occurrences of toreplace in array with replacewith.
+
+array_replace(array: timestamptz[], toreplace: timestamptz, replacewith: timestamptz) → timestamptz[]Replace all occurrences of toreplace in array with replacewith.
+
+array_replace(array: uuid[], toreplace: uuid, replacewith: uuid) → uuid[]Replace all occurrences of toreplace in array with replacewith.
+
+array_replace(array: oid[], toreplace: oid, replacewith: oid) → oid[]Replace all occurrences of toreplace in array with replacewith.
+
+array_replace(array: varbit[], toreplace: varbit, replacewith: varbit) → varbit[]Replace all occurrences of toreplace in array with replacewith.
+
+array_to_string(input: anyelement[], delim: string) → stringJoin an array into a string with a delimiter.
+
+array_to_string(input: anyelement[], delimiter: string, null: string) → stringJoin an array into a string with a delimiter, replacing NULLs with a null string.
+
+array_upper(input: anyelement[], array_dimension: int) → intCalculates the maximum value of input on the provided array_dimension. However, because CockroachDB doesn’t yet support multi-dimensional arrays, the only supported array_dimension is 1.
+
+string_to_array(str: string, delimiter: string) → string[]Split a string into components on a delimiter.
+
+string_to_array(str: string, delimiter: string, null: string) → string[]Split a string into components on a delimiter with a specified string to consider NULL.
+
+
+
+BOOL functions
+
+
+Function → ReturnsDescription
+
+ilike_escape(unescaped: string, pattern: string, escape: string) → boolMatches case insensetively unescaped with pattern using ‘escape’ as an escape token.
+
+inet_contained_by_or_equals(val: inet, container: inet) → boolTest for subnet inclusion or equality, using only the network parts of the addresses. The host part of the addresses is ignored.
+
+inet_contains_or_equals(container: inet, val: inet) → boolTest for subnet inclusion or equality, using only the network parts of the addresses. The host part of the addresses is ignored.
+
+inet_same_family(val: inet, val: inet) → boolChecks if two IP addresses are of the same IP family.
+
+like_escape(unescaped: string, pattern: string, escape: string) → boolMatches unescaped with pattern using ‘escape’ as an escape token.
+
+not_ilike_escape(unescaped: string, pattern: string, escape: string) → boolChecks whether unescaped not matches case insensetively with pattern using ‘escape’ as an escape token.
+
+not_like_escape(unescaped: string, pattern: string, escape: string) → boolChecks whether unescaped not matches with pattern using ‘escape’ as an escape token.
+
+not_similar_to_escape(unescaped: string, pattern: string, escape: string) → boolChecks whether unescaped not matches with pattern using ‘escape’ as an escape token.
+
+similar_to_escape(unescaped: string, pattern: string, escape: string) → boolMatches unescaped with pattern using ‘escape’ as an escape token.
+
+
+
+Comparison functions
+
+
+Function → ReturnsDescription
+
+greatest(anyelement...) → anyelementReturns the element with the greatest value.
+
+least(anyelement...) → anyelementReturns the element with the lowest value.
+
+
+
+Date and time functions
+
+
+Function → ReturnsDescription
+
+age(end: timestamptz, begin: timestamptz) → intervalCalculates the interval between begin and end.
+
+age(val: timestamptz) → intervalCalculates the interval between val and the current time.
+
+clock_timestamp() → timestampReturns the current system time on one of the cluster nodes.
+
+clock_timestamp() → timestamptzReturns the current system time on one of the cluster nodes.
+
+current_date() → dateReturns the date of the current transaction.
+The value is based on a timestamp picked when the transaction starts
+and which stays constant throughout the transaction. This timestamp
+has no relationship with the commit order of concurrent transactions.
+
+current_timestamp() → dateReturns the time of the current transaction.
+The value is based on a timestamp picked when the transaction starts
+and which stays constant throughout the transaction. This timestamp
+has no relationship with the commit order of concurrent transactions.
+
+current_timestamp() → timestampReturns the time of the current transaction.
+The value is based on a timestamp picked when the transaction starts
+and which stays constant throughout the transaction. This timestamp
+has no relationship with the commit order of concurrent transactions.
+
+current_timestamp() → timestamptzReturns the time of the current transaction.
+The value is based on a timestamp picked when the transaction starts
+and which stays constant throughout the transaction. This timestamp
+has no relationship with the commit order of concurrent transactions.
+
+date_trunc(element: string, input: date) → timestamptzTruncates input to precision element.  Sets all fields that are less
+significant than element to zero (or one, for day and month)
+Compatible elements: millennium, century, decade, year, quarter, month,
+week, day, hour, minute, second, millisecond, microsecond.
+
+date_trunc(element: string, input: time) → intervalTruncates input to precision element.  Sets all fields that are less
+significant than element to zero.
+Compatible elements: hour, minute, second, millisecond, microsecond.
+
+date_trunc(element: string, input: timestamp) → timestampTruncates input to precision element.  Sets all fields that are less
+significant than element to zero (or one, for day and month)
+Compatible elements: millennium, century, decade, year, quarter, month,
+week, day, hour, minute, second, millisecond, microsecond.
+
+date_trunc(element: string, input: timestamptz) → timestamptzTruncates input to precision element.  Sets all fields that are less
+significant than element to zero (or one, for day and month)
+Compatible elements: millennium, century, decade, year, quarter, month,
+week, day, hour, minute, second, millisecond, microsecond.
+
+experimental_follower_read_timestamp() → timestamptzReturns a timestamp which is very likely to be safe to perform
+against a follower replica.
+This function is intended to be used with an AS OF SYSTEM TIME clause to perform
+historical reads against a time which is recent but sufficiently old for reads
+to be performed against the closest replica as opposed to the currently
+leaseholder for a given range.
+Note that this function requires an enterprise license on a CCL distribution to
+return without an error.
+
+experimental_strftime(input: date, extract_format: string) → stringFrom input, extracts and formats the time as identified in extract_format using standard strftime notation (though not all formatting is supported).
+
+experimental_strftime(input: timestamp, extract_format: string) → stringFrom input, extracts and formats the time as identified in extract_format using standard strftime notation (though not all formatting is supported).
+
+experimental_strftime(input: timestamptz, extract_format: string) → stringFrom input, extracts and formats the time as identified in extract_format using standard strftime notation (though not all formatting is supported).
+
+experimental_strptime(input: string, format: string) → timestamptzReturns input as a timestamptz using format (which uses standard strptime formatting).
+
+extract(element: string, input: date) → intExtracts element from input.
+Compatible elements: millennium, century, decade, year, isoyear,
+quarter, month, week, dayofweek, isodow, dayofyear, julian,
+hour, minute, second, millisecond, microsecond, epoch
+
+extract(element: string, input: time) → intExtracts element from input.
+Compatible elements: hour, minute, second, millisecond, microsecond, epoch
+
+extract(element: string, input: timestamp) → intExtracts element from input.
+Compatible elements: millennium, century, decade, year, isoyear,
+quarter, month, week, dayofweek, isodow, dayofyear, julian,
+hour, minute, second, millisecond, microsecond, epoch
+
+extract(element: string, input: timestamptz) → intExtracts element from input.
+Compatible elements: millennium, century, decade, year, isoyear,
+quarter, month, week, dayofweek, isodow, dayofyear, julian,
+hour, minute, second, millisecond, microsecond, epoch
+
+extract_duration(element: string, input: interval) → intExtracts element from input.
+Compatible elements: hour, minute, second, millisecond, microsecond.
+
+now() → dateReturns the time of the current transaction.
+The value is based on a timestamp picked when the transaction starts
+and which stays constant throughout the transaction. This timestamp
+has no relationship with the commit order of concurrent transactions.
+
+now() → timestampReturns the time of the current transaction.
+The value is based on a timestamp picked when the transaction starts
+and which stays constant throughout the transaction. This timestamp
+has no relationship with the commit order of concurrent transactions.
+
+now() → timestamptzReturns the time of the current transaction.
+The value is based on a timestamp picked when the transaction starts
+and which stays constant throughout the transaction. This timestamp
+has no relationship with the commit order of concurrent transactions.
+
+statement_timestamp() → timestampReturns the start time of the current statement.
+
+statement_timestamp() → timestamptzReturns the start time of the current statement.
+
+timezone(timestamp: timestamp, timezone: string) → timestamptzTreat given time stamp without time zone as located in the specified time zone
+
+timezone(timestamptz: timestamptz, timezone: string) → timestampConvert given time stamp with time zone to the new time zone, with no time zone designation
+
+transaction_timestamp() → dateReturns the time of the current transaction.
+The value is based on a timestamp picked when the transaction starts
+and which stays constant throughout the transaction. This timestamp
+has no relationship with the commit order of concurrent transactions.
+
+transaction_timestamp() → timestampReturns the time of the current transaction.
+The value is based on a timestamp picked when the transaction starts
+and which stays constant throughout the transaction. This timestamp
+has no relationship with the commit order of concurrent transactions.
+
+transaction_timestamp() → timestamptzReturns the time of the current transaction.
+The value is based on a timestamp picked when the transaction starts
+and which stays constant throughout the transaction. This timestamp
+has no relationship with the commit order of concurrent transactions.
+
+
+
+ID generation functions
+
+
+Function → ReturnsDescription
+
+experimental_uuid_v4() → bytesReturns a UUID.
+
+gen_random_uuid() → uuidGenerates a random UUID and returns it as a value of UUID type.
+
+unique_rowid() → intReturns a unique ID used by CockroachDB to generate unique row IDs if a Primary Key isn’t defined for the table. The value is a combination of the insert timestamp and the ID of the node executing the statement, which guarantees this combination is globally unique. However, there can be gaps and the order is not completely guaranteed.
+
+uuid_v4() → bytesReturns a UUID.
+
+
+
+INET functions
+
+
+Function → ReturnsDescription
+
+abbrev(val: inet) → stringConverts the combined IP address and prefix length to an abbreviated display format as text.For INET types, this will omit the prefix length if it’s not the default (32 or IPv4, 128 for IPv6)
+For example, abbrev('192.168.1.2/24') returns '192.168.1.2/24'
+
+broadcast(val: inet) → inetGets the broadcast address for the network address represented by the value.
+For example, broadcast('192.168.1.2/24') returns '192.168.1.255/24'
+
+family(val: inet) → intExtracts the IP family of the value; 4 for IPv4, 6 for IPv6.
+For example, family('::1') returns 6
+
+host(val: inet) → stringExtracts the address part of the combined address/prefixlen value as text.
+For example, host('192.168.1.2/16') returns '192.168.1.2'
+
+hostmask(val: inet) → inetCreates an IP host mask corresponding to the prefix length in the value.
+For example, hostmask('192.168.1.2/16') returns '0.0.255.255'
+
+masklen(val: inet) → intRetrieves the prefix length stored in the value.
+For example, masklen('192.168.1.2/16') returns 16
+
+netmask(val: inet) → inetCreates an IP network mask corresponding to the prefix length in the value.
+For example, netmask('192.168.1.2/16') returns '255.255.0.0'
+
+set_masklen(val: inet, prefixlen: int) → inetSets the prefix length of val to prefixlen.
+For example, set_masklen('192.168.1.2', 16) returns '192.168.1.2/16'.
+
+text(val: inet) → stringConverts the IP address and prefix length to text.
+
+
+
+JSONB functions
+
+
+Function → ReturnsDescription
+
+array_to_json(array: anyelement[]) → jsonbReturns the array as JSON or JSONB.
+
+array_to_json(array: anyelement[], pretty_bool: bool) → jsonbReturns the array as JSON or JSONB.
+
+json_array_length(json: jsonb) → intReturns the number of elements in the outermost JSON or JSONB array.
+
+json_build_array(anyelement...) → jsonbBuilds a possibly-heterogeneously-typed JSON or JSONB array out of a variadic argument list.
+
+json_build_object(anyelement...) → jsonbBuilds a JSON object out of a variadic argument list.
+
+json_extract_path(jsonb, string...) → jsonbReturns the JSON value pointed to by the variadic arguments.
+
+json_object(keys: string[], values: string[]) → jsonbThis form of json_object takes keys and values pairwise from two separate arrays. In all other respects it is identical to the one-argument form.
+
+json_object(texts: string[]) → jsonbBuilds a JSON or JSONB object out of a text array. The array must have exactly one dimension with an even number of members, in which case they are taken as alternating key/value pairs.
+
+json_remove_path(val: jsonb, path: string[]) → jsonbRemove the specified path from the JSON object.
+
+json_set(val: jsonb, path: string[], to: jsonb) → jsonbReturns the JSON value pointed to by the variadic arguments.
+
+json_set(val: jsonb, path: string[], to: jsonb, create_missing: bool) → jsonbReturns the JSON value pointed to by the variadic arguments. If create_missing is false, new keys will not be inserted to objects and values will not be prepended or appended to arrays.
+
+json_strip_nulls(from_json: jsonb) → jsonbReturns from_json with all object fields that have null values omitted. Other null values are untouched.
+
+json_typeof(val: jsonb) → stringReturns the type of the outermost JSON value as a text string.
+
+jsonb_array_length(json: jsonb) → intReturns the number of elements in the outermost JSON or JSONB array.
+
+jsonb_build_array(anyelement...) → jsonbBuilds a possibly-heterogeneously-typed JSON or JSONB array out of a variadic argument list.
+
+jsonb_build_object(anyelement...) → jsonbBuilds a JSON object out of a variadic argument list.
+
+jsonb_extract_path(jsonb, string...) → jsonbReturns the JSON value pointed to by the variadic arguments.
+
+jsonb_insert(target: jsonb, path: string[], new_val: jsonb) → jsonbReturns the JSON value pointed to by the variadic arguments. new_val will be inserted before path target.
+
+jsonb_insert(target: jsonb, path: string[], new_val: jsonb, insert_after: bool) → jsonbReturns the JSON value pointed to by the variadic arguments. If insert_after is true (default is false), new_val will be inserted after path target.
+
+jsonb_object(keys: string[], values: string[]) → jsonbThis form of json_object takes keys and values pairwise from two separate arrays. In all other respects it is identical to the one-argument form.
+
+jsonb_object(texts: string[]) → jsonbBuilds a JSON or JSONB object out of a text array. The array must have exactly one dimension with an even number of members, in which case they are taken as alternating key/value pairs.
+
+jsonb_pretty(val: jsonb) → stringReturns the given JSON value as a STRING indented and with newlines.
+
+jsonb_set(val: jsonb, path: string[], to: jsonb) → jsonbReturns the JSON value pointed to by the variadic arguments.
+
+jsonb_set(val: jsonb, path: string[], to: jsonb, create_missing: bool) → jsonbReturns the JSON value pointed to by the variadic arguments. If create_missing is false, new keys will not be inserted to objects and values will not be prepended or appended to arrays.
+
+jsonb_strip_nulls(from_json: jsonb) → jsonbReturns from_json with all object fields that have null values omitted. Other null values are untouched.
+
+jsonb_typeof(val: jsonb) → stringReturns the type of the outermost JSON value as a text string.
+
+to_json(val: anyelement) → jsonbReturns the value as JSON or JSONB.
+
+to_jsonb(val: anyelement) → jsonbReturns the value as JSON or JSONB.
+
+
+
+Math and numeric functions
+
+
+Function → ReturnsDescription
+
+abs(val: decimal) → decimalCalculates the absolute value of val.
+
+abs(val: float) → floatCalculates the absolute value of val.
+
+abs(val: int) → intCalculates the absolute value of val.
+
+acos(val: float) → floatCalculates the inverse cosine of val.
+
+asin(val: float) → floatCalculates the inverse sine of val.
+
+atan(val: float) → floatCalculates the inverse tangent of val.
+
+atan2(x: float, y: float) → floatCalculates the inverse tangent of x/y.
+
+cbrt(val: decimal) → decimalCalculates the cube root (∛) of val.
+
+cbrt(val: float) → floatCalculates the cube root (∛) of val.
+
+ceil(val: decimal) → decimalCalculates the smallest integer greater than val.
+
+ceil(val: float) → floatCalculates the smallest integer greater than val.
+
+ceiling(val: decimal) → decimalCalculates the smallest integer greater than val.
+
+ceiling(val: float) → floatCalculates the smallest integer greater than val.
+
+cos(val: float) → floatCalculates the cosine of val.
+
+cot(val: float) → floatCalculates the cotangent of val.
+
+crc32c(bytes...) → intCalculates the CRC-32 hash using the Castagnoli polynomial.
+
+crc32c(string...) → intCalculates the CRC-32 hash using the Castagnoli polynomial.
+
+crc32ieee(bytes...) → intCalculates the CRC-32 hash using the IEEE polynomial.
+
+crc32ieee(string...) → intCalculates the CRC-32 hash using the IEEE polynomial.
+
+degrees(val: float) → floatConverts val as a radian value to a degree value.
+
+div(x: decimal, y: decimal) → decimalCalculates the integer quotient of x/y.
+
+div(x: float, y: float) → floatCalculates the integer quotient of x/y.
+
+div(x: int, y: int) → intCalculates the integer quotient of x/y.
+
+exp(val: decimal) → decimalCalculates e ^ val.
+
+exp(val: float) → floatCalculates e ^ val.
+
+floor(val: decimal) → decimalCalculates the largest integer not greater than val.
+
+floor(val: float) → floatCalculates the largest integer not greater than val.
+
+fnv32(bytes...) → intCalculates the 32-bit FNV-1 hash value of a set of values.
+
+fnv32(string...) → intCalculates the 32-bit FNV-1 hash value of a set of values.
+
+fnv32a(bytes...) → intCalculates the 32-bit FNV-1a hash value of a set of values.
+
+fnv32a(string...) → intCalculates the 32-bit FNV-1a hash value of a set of values.
+
+fnv64(bytes...) → intCalculates the 64-bit FNV-1 hash value of a set of values.
+
+fnv64(string...) → intCalculates the 64-bit FNV-1 hash value of a set of values.
+
+fnv64a(bytes...) → intCalculates the 64-bit FNV-1a hash value of a set of values.
+
+fnv64a(string...) → intCalculates the 64-bit FNV-1a hash value of a set of values.
+
+isnan(val: decimal) → boolReturns true if val is NaN, false otherwise.
+
+isnan(val: float) → boolReturns true if val is NaN, false otherwise.
+
+ln(val: decimal) → decimalCalculates the natural log of val.
+
+ln(val: float) → floatCalculates the natural log of val.
+
+log(val: decimal) → decimalCalculates the base 10 log of val.
+
+log(val: float) → floatCalculates the base 10 log of val.
+
+mod(x: decimal, y: decimal) → decimalCalculates x%y.
+
+mod(x: float, y: float) → floatCalculates x%y.
+
+mod(x: int, y: int) → intCalculates x%y.
+
+pi() → floatReturns the value for pi (3.141592653589793).
+
+pow(x: decimal, y: decimal) → decimalCalculates x^y.
+
+pow(x: float, y: float) → floatCalculates x^y.
+
+pow(x: int, y: int) → intCalculates x^y.
+
+power(x: decimal, y: decimal) → decimalCalculates x^y.
+
+power(x: float, y: float) → floatCalculates x^y.
+
+power(x: int, y: int) → intCalculates x^y.
+
+radians(val: float) → floatConverts val as a degree value to a radians value.
+
+random() → floatReturns a random float between 0 and 1.
+
+round(input: decimal, decimal_accuracy: int) → decimalKeeps decimal_accuracy number of figures to the right of the zero position in input using half away from zero rounding. If decimal_accuracy is not in the range -2^31…(2^31-1), the results are undefined.
+
+round(input: float, decimal_accuracy: int) → floatKeeps decimal_accuracy number of figures to the right of the zero position  in input using half to even (banker’s) rounding.
+
+round(val: decimal) → decimalRounds val to the nearest integer, half away from zero: round(+/-2.4) = +/-2, round(+/-2.5) = +/-3.
+
+round(val: float) → floatRounds val to the nearest integer using half to even (banker’s) rounding.
+
+sign(val: decimal) → decimalDetermines the sign of val: 1 for positive; 0 for 0 values; -1 for negative.
+
+sign(val: float) → floatDetermines the sign of val: 1 for positive; 0 for 0 values; -1 for negative.
+
+sign(val: int) → intDetermines the sign of val: 1 for positive; 0 for 0 values; -1 for negative.
+
+sin(val: float) → floatCalculates the sine of val.
+
+sqrt(val: decimal) → decimalCalculates the square root of val.
+
+sqrt(val: float) → floatCalculates the square root of val.
+
+tan(val: float) → floatCalculates the tangent of val.
+
+trunc(val: decimal) → decimalTruncates the decimal values of val.
+
+trunc(val: float) → floatTruncates the decimal values of val.
+
+width_bucket(operand: decimal, b1: decimal, b2: decimal, count: int) → intreturn the bucket number to which operand would be assigned in a histogram having count equal-width buckets spanning the range b1 to b2.
+
+width_bucket(operand: int, b1: int, b2: int, count: int) → intreturn the bucket number to which operand would be assigned in a histogram having count equal-width buckets spanning the range b1 to b2.
+
+width_bucket(operand: anyelement, thresholds: anyelement[]) → intreturn the bucket number to which operand would be assigned given an array listing the lower bounds of the buckets; returns 0 for an input less than the first lower bound; the thresholds array must be sorted, smallest first, or unexpected results will be obtained
+
+
+
+Sequence functions
+
+
+Function → ReturnsDescription
+
+currval(sequence_name: string) → intReturns the latest value obtained with nextval for this sequence in this session.
+
+lastval() → intReturn value most recently obtained with nextval in this session.
+
+nextval(sequence_name: string) → intAdvances the given sequence and returns its new value.
+
+setval(sequence_name: string, value: int) → intSet the given sequence’s current value. The next call to nextval will return value + Increment
+
+setval(sequence_name: string, value: int, is_called: bool) → intSet the given sequence’s current value. If is_called is false, the next call to nextval will return value; otherwise value + Increment.
+
+
+
+Set-returning functions
+
+
+Function → ReturnsDescription
+
+aclexplode(aclitems: string[]) → tuple{oid AS grantor, oid AS grantee, string AS privilege_type, bool AS is_grantable}Produces a virtual table containing aclitem stuff (returns no rows as this feature is unsupported in CockroachDB)
+
+crdb_internal.unary_table() → tupleProduces a virtual table containing a single row with no values.
+This function is used only by CockroachDB’s developers for testing purposes.
+
+generate_series(start: int, end: int) → intProduces a virtual table containing the integer values from start to end, inclusive.
+
+generate_series(start: int, end: int, step: int) → intProduces a virtual table containing the integer values from start to end, inclusive, by increment of step.
+
+generate_series(start: timestamp, end: timestamp, step: interval) → timestampProduces a virtual table containing the timestamp values from start to end, inclusive, by increment of step.
+
+generate_subscripts(array: anyelement[]) → intReturns a series comprising the given array’s subscripts.
+
+generate_subscripts(array: anyelement[], dim: int) → intReturns a series comprising the given array’s subscripts.
+
+generate_subscripts(array: anyelement[], dim: int, reverse: bool) → intReturns a series comprising the given array’s subscripts.
+When reverse is true, the series is returned in reverse order.
+
+information_schema._pg_expandarray(input: anyelement[]) → anyelementReturns the input array as a set of rows with an index
+
+json_array_elements(input: jsonb) → jsonbExpands a JSON array to a set of JSON values.
+
+json_array_elements_text(input: jsonb) → stringExpands a JSON array to a set of text values.
+
+json_each(input: jsonb) → tuple{string AS key, jsonb AS value}Expands the outermost JSON or JSONB object into a set of key/value pairs.
+
+json_each_text(input: jsonb) → tuple{string AS key, string AS value}Expands the outermost JSON or JSONB object into a set of key/value pairs. The returned values will be of type text.
+
+json_object_keys(input: jsonb) → stringReturns sorted set of keys in the outermost JSON object.
+
+jsonb_array_elements(input: jsonb) → jsonbExpands a JSON array to a set of JSON values.
+
+jsonb_array_elements_text(input: jsonb) → stringExpands a JSON array to a set of text values.
+
+jsonb_each(input: jsonb) → tuple{string AS key, jsonb AS value}Expands the outermost JSON or JSONB object into a set of key/value pairs.
+
+jsonb_each_text(input: jsonb) → tuple{string AS key, string AS value}Expands the outermost JSON or JSONB object into a set of key/value pairs. The returned values will be of type text.
+
+jsonb_object_keys(input: jsonb) → stringReturns sorted set of keys in the outermost JSON object.
+
+pg_get_keywords() → tuple{string AS word, string AS catcode, string AS catdesc}Produces a virtual table containing the keywords known to the SQL parser.
+
+unnest(input: anyelement[]) → anyelementReturns the input array as a set of rows
+
+
+
+String and byte functions
+
+
+Function → ReturnsDescription
+
+ascii(val: string) → intReturns the character code of the first character in val. Despite the name, the function supports Unicode too.
+
+bit_length(val: bytes) → intCalculates the number of bits in val.
+
+bit_length(val: string) → intCalculates the number of bits used to represent val.
+
+btrim(input: string, trim_chars: string) → stringRemoves any characters included in trim_chars from the beginning or end of input (applies recursively).
+For example, btrim('doggie', 'eod') returns ggi.
+
+btrim(val: string) → stringRemoves all spaces from the beginning and end of val.
+
+char_length(val: bytes) → intCalculates the number of bytes in val.
+
+char_length(val: string) → intCalculates the number of characters in val.
+
+character_length(val: bytes) → intCalculates the number of bytes in val.
+
+character_length(val: string) → intCalculates the number of characters in val.
+
+chr(val: int) → stringReturns the character with the code given in val. Inverse function of ascii().
+
+concat(string...) → stringConcatenates a comma-separated list of strings.
+
+concat_ws(string...) → stringUses the first argument as a separator between the concatenation of the subsequent arguments.
+For example concat_ws('!','wow','great') returns wow!great.
+
+convert_from(str: bytes, enc: string) → stringDecode the bytes in str into a string using encoding enc. Supports encodings ‘UTF8’ and ‘LATIN1’.
+
+convert_to(str: string, enc: string) → bytesEncode the string str as a byte array using encoding enc. Supports encodings ‘UTF8’ and ‘LATIN1’.
+
+decode(text: string, format: string) → bytesDecodes data using format (hex / escape / base64).
+
+encode(data: bytes, format: string) → stringEncodes data using format (hex / escape / base64).
+
+from_ip(val: bytes) → stringConverts the byte string representation of an IP to its character string representation.
+
+from_uuid(val: bytes) → stringConverts the byte string representation of a UUID to its character string representation.
+
+initcap(val: string) → stringCapitalizes the first letter of val.
+
+left(input: bytes, return_set: int) → bytesReturns the first return_set bytes from input.
+
+left(input: string, return_set: int) → stringReturns the first return_set characters from input.
+
+length(val: bytes) → intCalculates the number of bytes in val.
+
+length(val: string) → intCalculates the number of characters in val.
+
+lower(val: string) → stringConverts all characters in val to their lower-case equivalents.
+
+lpad(string: string, length: int) → stringPads string to length by adding ’ ’ to the left of string.If string is longer than length it is truncated.
+
+lpad(string: string, length: int, fill: string) → stringPads string by adding fill to the left of string to make it length. If string is longer than length it is truncated.
+
+ltrim(input: string, trim_chars: string) → stringRemoves any characters included in trim_chars from the beginning (left-hand side) of input (applies recursively).
+For example, ltrim('doggie', 'od') returns ggie.
+
+ltrim(val: string) → stringRemoves all spaces from the beginning (left-hand side) of val.
+
+md5(bytes...) → stringCalculates the MD5 hash value of a set of values.
+
+md5(string...) → stringCalculates the MD5 hash value of a set of values.
+
+octet_length(val: bytes) → intCalculates the number of bytes in val.
+
+octet_length(val: string) → intCalculates the number of bytes used to represent val.
+
+overlay(input: string, overlay_val: string, start_pos: int) → stringReplaces characters in input with overlay_val starting at start_pos (begins at 1).
+For example, overlay('doggie', 'CAT', 2) returns dCATie.
+
+overlay(input: string, overlay_val: string, start_pos: int, end_pos: int) → stringDeletes the characters in input between start_pos and end_pos (count starts at 1), and then insert overlay_val at start_pos.
+
+pg_collation_for(str: anyelement) → stringReturns the collation of the argument
+
+quote_ident(val: string) → stringReturn val suitably quoted to serve as identifier in a SQL statement.
+
+quote_literal(val: string) → stringReturn val suitably quoted to serve as string literal in a SQL statement.
+
+quote_literal(val: anyelement) → stringCoerce val to a string and then quote it as a literal.
+
+quote_nullable(val: string) → stringCoerce val to a string and then quote it as a literal. If val is NULL, returns ‘NULL’.
+
+quote_nullable(val: anyelement) → stringCoerce val to a string and then quote it as a literal. If val is NULL, returns ‘NULL’.
+
+regexp_extract(input: string, regex: string) → stringReturns the first match for the Regular Expression regex in input.
+
+regexp_replace(input: string, regex: string, replace: string) → stringReplaces matches for the Regular Expression regex in input with the Regular Expression replace.
+
+regexp_replace(input: string, regex: string, replace: string, flags: string) → stringReplaces matches for the regular expression regex in input with the regular expression replace using flags.
+CockroachDB supports the following flags:
+
+
+
+Flag
+Description
+
+
+
+
+c
+Case-sensitive matching
+
+
+g
+Global matching (match each substring instead of only the first)
+
+
+i
+Case-insensitive matching
+
+
+m or n
+Newline-sensitive (see below)
+
+
+p
+Partial newline-sensitive matching (see below)
+
+
+s
+Newline-insensitive (default)
+
+
+w
+Inverse partial newline-sensitive matching (see below)
+
+
+
+
+
+
+Mode
+. and [^...] match newlines
+^ and $ match line boundaries
+
+
+
+
+s
+yes
+no
+
+
+w
+yes
+yes
+
+
+p
+no
+no
+
+
+m/n
+no
+yes
+
+
+
+
+repeat(input: string, repeat_counter: int) → stringConcatenates input repeat_counter number of times.
+For example, repeat('dog', 2) returns dogdog.
+
+replace(input: string, find: string, replace: string) → stringReplaces all occurrences of find with replace in input
+
+reverse(val: string) → stringReverses the order of the string’s characters.
+
+right(input: bytes, return_set: int) → bytesReturns the last return_set bytes from input.
+
+right(input: string, return_set: int) → stringReturns the last return_set characters from input.
+
+rpad(string: string, length: int) → stringPads string to length by adding ’ ’ to the right of string. If string is longer than length it is truncated.
+
+rpad(string: string, length: int, fill: string) → stringPads string to length by adding fill to the right of string. If string is longer than length it is truncated.
+
+rtrim(input: string, trim_chars: string) → stringRemoves any characters included in trim_chars from the end (right-hand side) of input (applies recursively).
+For example, rtrim('doggie', 'ei') returns dogg.
+
+rtrim(val: string) → stringRemoves all spaces from the end (right-hand side) of val.
+
+sha1(bytes...) → stringCalculates the SHA1 hash value of a set of values.
+
+sha1(string...) → stringCalculates the SHA1 hash value of a set of values.
+
+sha256(bytes...) → stringCalculates the SHA256 hash value of a set of values.
+
+sha256(string...) → stringCalculates the SHA256 hash value of a set of values.
+
+sha512(bytes...) → stringCalculates the SHA512 hash value of a set of values.
+
+sha512(string...) → stringCalculates the SHA512 hash value of a set of values.
+
+split_part(input: string, delimiter: string, return_index_pos: int) → stringSplits input on delimiter and return the value in the return_index_pos  position (starting at 1).
+For example, split_part('123.456.789.0','.',3)returns 789.
+
+strpos(input: string, find: string) → intCalculates the position where the string find begins in input.
+For example, strpos('doggie', 'gie') returns 4.
+
+substr(input: string, regex: string) → stringReturns a substring of input that matches the regular expression regex.
+
+substr(input: string, regex: string, escape_char: string) → stringReturns a substring of input that matches the regular expression regex using escape_char as your escape character instead of \.
+
+substr(input: string, start_pos: int) → stringReturns a substring of input starting at start_pos (count starts at 1).
+
+substr(input: string, start_pos: int, length: int) → stringReturns a substring of input starting at start_pos (count starts at 1) and including up to length characters.
+
+substring(input: string, regex: string) → stringReturns a substring of input that matches the regular expression regex.
+
+substring(input: string, regex: string, escape_char: string) → stringReturns a substring of input that matches the regular expression regex using escape_char as your escape character instead of \.
+
+substring(input: string, start_pos: int) → stringReturns a substring of input starting at start_pos (count starts at 1).
+
+substring(input: string, start_pos: int, length: int) → stringReturns a substring of input starting at start_pos (count starts at 1) and including up to length characters.
+
+to_english(val: int) → stringThis function enunciates the value of its argument using English cardinals.
+
+to_hex(val: bytes) → stringConverts val to its hexadecimal representation.
+
+to_hex(val: int) → stringConverts val to its hexadecimal representation.
+
+to_ip(val: string) → bytesConverts the character string representation of an IP to its byte string representation.
+
+to_uuid(val: string) → bytesConverts the character string representation of a UUID to its byte string representation.
+
+translate(input: string, find: string, replace: string) → stringIn input, replaces the first character from find with the first character in replace; repeat for each character in find.
+For example, translate('doggie', 'dog', '123'); returns 1233ie.
+
+upper(val: string) → stringConverts all characters in val to their to their upper-case equivalents.
+
+
+
+System info functions
+
+
+Function → ReturnsDescription
+
+cluster_logical_timestamp() → decimalReturns the logical time of the current transaction.
+This function is reserved for testing purposes by CockroachDB
+developers and its definition may change without prior notice.
+Note that uses of this function disable server-side optimizations and
+may increase either contention or retry errors, or both.
+
+crdb_internal.check_consistency(stats_only: bool, start_key: bytes, end_key: bytes) → tuple{int AS range_id, bytes AS start_key, string AS start_key_pretty, string AS status, string AS detail}Runs a consistency check on ranges touching the specified key range. an empty start or end key is treated as the minimum and maximum possible, respectively. stats_only should only be set to false when targeting a small number of ranges to avoid overloading the cluster. Each returned row contains the range ID, the status (a roachpb.CheckConsistencyResponse_Status), and verbose detail.
+Example usage:
+SELECT * FROM crdb_internal.check_consistency(true, ‘\x02’, ‘\x04’)
+
+crdb_internal.cluster_id() → uuidReturns the cluster ID.
+
+crdb_internal.cluster_name() → stringReturns the cluster name.
+
+crdb_internal.encode_key(table_id: int, index_id: int, row_tuple: tuple) → bytesGenerate the key for a row on a particular table and index.
+
+crdb_internal.force_assertion_error(msg: string) → intThis function is used only by CockroachDB’s developers for testing purposes.
+
+crdb_internal.force_error(errorCode: string, msg: string) → intThis function is used only by CockroachDB’s developers for testing purposes.
+
+crdb_internal.force_log_fatal(msg: string) → intThis function is used only by CockroachDB’s developers for testing purposes.
+
+crdb_internal.force_panic(msg: string) → intThis function is used only by CockroachDB’s developers for testing purposes.
+
+crdb_internal.force_retry(val: interval) → intThis function is used only by CockroachDB’s developers for testing purposes.
+
+crdb_internal.get_namespace_id(parent_id: int, name: string) → int
+crdb_internal.get_zone_config(namespace_id: int) → bytes
+crdb_internal.is_admin() → boolRetrieves the current user’s admin status.
+
+crdb_internal.json_num_index_entries(val: jsonb) → intThis function is used only by CockroachDB’s developers for testing purposes.
+
+crdb_internal.lease_holder(key: bytes) → intThis function is used to fetch the leaseholder corresponding to a request key
+
+crdb_internal.locality_value(key: string) → stringReturns the value of the specified locality key.
+
+crdb_internal.no_constant_folding(input: anyelement) → anyelementThis function is used only by CockroachDB’s developers for testing purposes.
+
+crdb_internal.node_executable_version() → stringReturns the version of CockroachDB this node is running.
+
+crdb_internal.pretty_key(raw_key: bytes, skip_fields: int) → stringThis function is used only by CockroachDB’s developers for testing purposes.
+
+crdb_internal.range_stats(key: bytes) → jsonbThis function is used to retrieve range statistics information as a JSON object.
+
+crdb_internal.round_decimal_values(val: decimal, scale: int) → decimalThis function is used internally to round decimal values during mutations.
+
+crdb_internal.round_decimal_values(val: decimal[], scale: int) → decimal[]This function is used internally to round decimal array values during mutations.
+
+crdb_internal.set_vmodule(vmodule_string: string) → intSet the equivalent of the --vmodule flag on the gateway node processing this request; it affords control over the logging verbosity of different files. Example syntax: crdb_internal.set_vmodule('recordio=2,file=1,gfs*=3'). Reset with: crdb_internal.set_vmodule(''). Raising the verbosity can severely affect performance.
+
+current_database() → stringReturns the current database.
+
+current_schema() → stringReturns the current schema.
+
+current_schemas(include_pg_catalog: bool) → string[]Returns the valid schemas in the search path.
+
+current_user() → stringReturns the current user. This function is provided for compatibility with PostgreSQL.
+
+version() → stringReturns the node’s version of CockroachDB.
+
+
+
+TUPLE functions
+
+
+Function → ReturnsDescription
+
+row_to_json(row: tuple) → jsonbReturns the row as a JSON object.
+
+
+
+Compatibility functions
+
+
+Function → ReturnsDescription
+
+format_type(type_oid: oid, typemod: int) → stringReturns the SQL name of a data type that is identified by its type OID and possibly a type modifier. Currently, the type modifier is ignored.
+
+has_any_column_privilege(table: string, privilege: string) → boolReturns whether or not the current user has privileges for any column of table.
+
+has_any_column_privilege(table: oid, privilege: string) → boolReturns whether or not the current user has privileges for any column of table.
+
+has_any_column_privilege(user: string, table: string, privilege: string) → boolReturns whether or not the user has privileges for any column of table.
+
+has_any_column_privilege(user: string, table: oid, privilege: string) → boolReturns whether or not the user has privileges for any column of table.
+
+has_any_column_privilege(user: oid, table: string, privilege: string) → boolReturns whether or not the user has privileges for any column of table.
+
+has_any_column_privilege(user: oid, table: oid, privilege: string) → boolReturns whether or not the user has privileges for any column of table.
+
+has_column_privilege(table: string, column: int, privilege: string) → boolReturns whether or not the current user has privileges for column.
+
+has_column_privilege(table: string, column: string, privilege: string) → boolReturns whether or not the current user has privileges for column.
+
+has_column_privilege(table: oid, column: int, privilege: string) → boolReturns whether or not the current user has privileges for column.
+
+has_column_privilege(table: oid, column: string, privilege: string) → boolReturns whether or not the current user has privileges for column.
+
+has_column_privilege(user: string, table: string, column: int, privilege: string) → boolReturns whether or not the user has privileges for column.
+
+has_column_privilege(user: string, table: string, column: string, privilege: string) → boolReturns whether or not the user has privileges for column.
+
+has_column_privilege(user: string, table: oid, column: int, privilege: string) → boolReturns whether or not the user has privileges for column.
+
+has_column_privilege(user: string, table: oid, column: string, privilege: string) → boolReturns whether or not the user has privileges for column.
+
+has_column_privilege(user: oid, table: string, column: int, privilege: string) → boolReturns whether or not the user has privileges for column.
+
+has_column_privilege(user: oid, table: string, column: string, privilege: string) → boolReturns whether or not the user has privileges for column.
+
+has_column_privilege(user: oid, table: oid, column: int, privilege: string) → boolReturns whether or not the user has privileges for column.
+
+has_column_privilege(user: oid, table: oid, column: string, privilege: string) → boolReturns whether or not the user has privileges for column.
+
+has_database_privilege(database: string, privilege: string) → boolReturns whether or not the current user has privileges for database.
+
+has_database_privilege(database: oid, privilege: string) → boolReturns whether or not the current user has privileges for database.
+
+has_database_privilege(user: string, database: string, privilege: string) → boolReturns whether or not the user has privileges for database.
+
+has_database_privilege(user: string, database: oid, privilege: string) → boolReturns whether or not the user has privileges for database.
+
+has_database_privilege(user: oid, database: string, privilege: string) → boolReturns whether or not the user has privileges for database.
+
+has_database_privilege(user: oid, database: oid, privilege: string) → boolReturns whether or not the user has privileges for database.
+
+has_foreign_data_wrapper_privilege(fdw: string, privilege: string) → boolReturns whether or not the current user has privileges for foreign-data wrapper.
+
+has_foreign_data_wrapper_privilege(fdw: oid, privilege: string) → boolReturns whether or not the current user has privileges for foreign-data wrapper.
+
+has_foreign_data_wrapper_privilege(user: string, fdw: string, privilege: string) → boolReturns whether or not the user has privileges for foreign-data wrapper.
+
+has_foreign_data_wrapper_privilege(user: string, fdw: oid, privilege: string) → boolReturns whether or not the user has privileges for foreign-data wrapper.
+
+has_foreign_data_wrapper_privilege(user: oid, fdw: string, privilege: string) → boolReturns whether or not the user has privileges for foreign-data wrapper.
+
+has_foreign_data_wrapper_privilege(user: oid, fdw: oid, privilege: string) → boolReturns whether or not the user has privileges for foreign-data wrapper.
+
+has_function_privilege(function: string, privilege: string) → boolReturns whether or not the current user has privileges for function.
+
+has_function_privilege(function: oid, privilege: string) → boolReturns whether or not the current user has privileges for function.
+
+has_function_privilege(user: string, function: string, privilege: string) → boolReturns whether or not the user has privileges for function.
+
+has_function_privilege(user: string, function: oid, privilege: string) → boolReturns whether or not the user has privileges for function.
+
+has_function_privilege(user: oid, function: string, privilege: string) → boolReturns whether or not the user has privileges for function.
+
+has_function_privilege(user: oid, function: oid, privilege: string) → boolReturns whether or not the user has privileges for function.
+
+has_language_privilege(language: string, privilege: string) → boolReturns whether or not the current user has privileges for language.
+
+has_language_privilege(language: oid, privilege: string) → boolReturns whether or not the current user has privileges for language.
+
+has_language_privilege(user: string, language: string, privilege: string) → boolReturns whether or not the user has privileges for language.
+
+has_language_privilege(user: string, language: oid, privilege: string) → boolReturns whether or not the user has privileges for language.
+
+has_language_privilege(user: oid, language: string, privilege: string) → boolReturns whether or not the user has privileges for language.
+
+has_language_privilege(user: oid, language: oid, privilege: string) → boolReturns whether or not the user has privileges for language.
+
+has_schema_privilege(schema: string, privilege: string) → boolReturns whether or not the current user has privileges for schema.
+
+has_schema_privilege(schema: oid, privilege: string) → boolReturns whether or not the current user has privileges for schema.
+
+has_schema_privilege(user: string, schema: string, privilege: string) → boolReturns whether or not the user has privileges for schema.
+
+has_schema_privilege(user: string, schema: oid, privilege: string) → boolReturns whether or not the user has privileges for schema.
+
+has_schema_privilege(user: oid, schema: string, privilege: string) → boolReturns whether or not the user has privileges for schema.
+
+has_schema_privilege(user: oid, schema: oid, privilege: string) → boolReturns whether or not the user has privileges for schema.
+
+has_sequence_privilege(sequence: string, privilege: string) → boolReturns whether or not the current user has privileges for sequence.
+
+has_sequence_privilege(sequence: oid, privilege: string) → boolReturns whether or not the current user has privileges for sequence.
+
+has_sequence_privilege(user: string, sequence: string, privilege: string) → boolReturns whether or not the user has privileges for sequence.
+
+has_sequence_privilege(user: string, sequence: oid, privilege: string) → boolReturns whether or not the user has privileges for sequence.
+
+has_sequence_privilege(user: oid, sequence: string, privilege: string) → boolReturns whether or not the user has privileges for sequence.
+
+has_sequence_privilege(user: oid, sequence: oid, privilege: string) → boolReturns whether or not the user has privileges for sequence.
+
+has_server_privilege(server: string, privilege: string) → boolReturns whether or not the current user has privileges for foreign server.
+
+has_server_privilege(server: oid, privilege: string) → boolReturns whether or not the current user has privileges for foreign server.
+
+has_server_privilege(user: string, server: string, privilege: string) → boolReturns whether or not the user has privileges for foreign server.
+
+has_server_privilege(user: string, server: oid, privilege: string) → boolReturns whether or not the user has privileges for foreign server.
+
+has_server_privilege(user: oid, server: string, privilege: string) → boolReturns whether or not the user has privileges for foreign server.
+
+has_server_privilege(user: oid, server: oid, privilege: string) → boolReturns whether or not the user has privileges for foreign server.
+
+has_table_privilege(table: string, privilege: string) → boolReturns whether or not the current user has privileges for table.
+
+has_table_privilege(table: oid, privilege: string) → boolReturns whether or not the current user has privileges for table.
+
+has_table_privilege(user: string, table: string, privilege: string) → boolReturns whether or not the user has privileges for table.
+
+has_table_privilege(user: string, table: oid, privilege: string) → boolReturns whether or not the user has privileges for table.
+
+has_table_privilege(user: oid, table: string, privilege: string) → boolReturns whether or not the user has privileges for table.
+
+has_table_privilege(user: oid, table: oid, privilege: string) → boolReturns whether or not the user has privileges for table.
+
+has_tablespace_privilege(tablespace: string, privilege: string) → boolReturns whether or not the current user has privileges for tablespace.
+
+has_tablespace_privilege(tablespace: oid, privilege: string) → boolReturns whether or not the current user has privileges for tablespace.
+
+has_tablespace_privilege(user: string, tablespace: string, privilege: string) → boolReturns whether or not the user has privileges for tablespace.
+
+has_tablespace_privilege(user: string, tablespace: oid, privilege: string) → boolReturns whether or not the user has privileges for tablespace.
+
+has_tablespace_privilege(user: oid, tablespace: string, privilege: string) → boolReturns whether or not the user has privileges for tablespace.
+
+has_tablespace_privilege(user: oid, tablespace: oid, privilege: string) → boolReturns whether or not the user has privileges for tablespace.
+
+has_type_privilege(type: string, privilege: string) → boolReturns whether or not the current user has privileges for type.
+
+has_type_privilege(type: oid, privilege: string) → boolReturns whether or not the current user has privileges for type.
+
+has_type_privilege(user: string, type: string, privilege: string) → boolReturns whether or not the user has privileges for type.
+
+has_type_privilege(user: string, type: oid, privilege: string) → boolReturns whether or not the user has privileges for type.
+
+has_type_privilege(user: oid, type: string, privilege: string) → boolReturns whether or not the user has privileges for type.
+
+has_type_privilege(user: oid, type: oid, privilege: string) → boolReturns whether or not the user has privileges for type.
+
+oid(int: int) → oidConverts an integer to an OID.
+
+pg_sleep(seconds: float) → boolpg_sleep makes the current session’s process sleep until seconds seconds have elapsed. seconds is a value of type double precision, so fractional-second delays can be specified.

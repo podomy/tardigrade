@@ -1,0 +1,301 @@
+Function → ReturnsDescription
+
+cume_dist() → floatCalculates the relative rank of the current row: (number of rows preceding or peer with current row) / (total rows).
+
+dense_rank() → intCalculates the rank of the current row without gaps; this function counts peer groups.
+
+first_value(val: bool) → boolReturns val evaluated at the row that is the first row of the window frame.
+
+first_value(val: bytes) → bytesReturns val evaluated at the row that is the first row of the window frame.
+
+first_value(val: date) → dateReturns val evaluated at the row that is the first row of the window frame.
+
+first_value(val: decimal) → decimalReturns val evaluated at the row that is the first row of the window frame.
+
+first_value(val: float) → floatReturns val evaluated at the row that is the first row of the window frame.
+
+first_value(val: inet) → inetReturns val evaluated at the row that is the first row of the window frame.
+
+first_value(val: int) → intReturns val evaluated at the row that is the first row of the window frame.
+
+first_value(val: interval) → intervalReturns val evaluated at the row that is the first row of the window frame.
+
+first_value(val: string) → stringReturns val evaluated at the row that is the first row of the window frame.
+
+first_value(val: time) → timeReturns val evaluated at the row that is the first row of the window frame.
+
+first_value(val: timestamp) → timestampReturns val evaluated at the row that is the first row of the window frame.
+
+first_value(val: timestamptz) → timestamptzReturns val evaluated at the row that is the first row of the window frame.
+
+first_value(val: uuid) → uuidReturns val evaluated at the row that is the first row of the window frame.
+
+first_value(val: jsonb) → jsonbReturns val evaluated at the row that is the first row of the window frame.
+
+first_value(val: oid) → oidReturns val evaluated at the row that is the first row of the window frame.
+
+first_value(val: varbit) → varbitReturns val evaluated at the row that is the first row of the window frame.
+
+lag(val: bool) → boolReturns val evaluated at the previous row within current row’s partition; if there is no such row, instead returns null.
+
+lag(val: bool, n: int) → boolReturns val evaluated at the row that is n rows before the current row within its partition; if there is no such row, instead returns null. n is evaluated with respect to the current row.
+
+lag(val: bool, n: int, default: bool) → boolReturns val evaluated at the row that is n rows before the current row within its partition; if there is no such, row, instead returns default (which must be of the same type as val). Both n and default are evaluated with respect to the current row.
+
+lag(val: bytes) → bytesReturns val evaluated at the previous row within current row’s partition; if there is no such row, instead returns null.
+
+lag(val: bytes, n: int) → bytesReturns val evaluated at the row that is n rows before the current row within its partition; if there is no such row, instead returns null. n is evaluated with respect to the current row.
+
+lag(val: bytes, n: int, default: bytes) → bytesReturns val evaluated at the row that is n rows before the current row within its partition; if there is no such, row, instead returns default (which must be of the same type as val). Both n and default are evaluated with respect to the current row.
+
+lag(val: date) → dateReturns val evaluated at the previous row within current row’s partition; if there is no such row, instead returns null.
+
+lag(val: date, n: int) → dateReturns val evaluated at the row that is n rows before the current row within its partition; if there is no such row, instead returns null. n is evaluated with respect to the current row.
+
+lag(val: date, n: int, default: date) → dateReturns val evaluated at the row that is n rows before the current row within its partition; if there is no such, row, instead returns default (which must be of the same type as val). Both n and default are evaluated with respect to the current row.
+
+lag(val: decimal) → decimalReturns val evaluated at the previous row within current row’s partition; if there is no such row, instead returns null.
+
+lag(val: decimal, n: int) → decimalReturns val evaluated at the row that is n rows before the current row within its partition; if there is no such row, instead returns null. n is evaluated with respect to the current row.
+
+lag(val: decimal, n: int, default: decimal) → decimalReturns val evaluated at the row that is n rows before the current row within its partition; if there is no such, row, instead returns default (which must be of the same type as val). Both n and default are evaluated with respect to the current row.
+
+lag(val: float) → floatReturns val evaluated at the previous row within current row’s partition; if there is no such row, instead returns null.
+
+lag(val: float, n: int) → floatReturns val evaluated at the row that is n rows before the current row within its partition; if there is no such row, instead returns null. n is evaluated with respect to the current row.
+
+lag(val: float, n: int, default: float) → floatReturns val evaluated at the row that is n rows before the current row within its partition; if there is no such, row, instead returns default (which must be of the same type as val). Both n and default are evaluated with respect to the current row.
+
+lag(val: inet) → inetReturns val evaluated at the previous row within current row’s partition; if there is no such row, instead returns null.
+
+lag(val: inet, n: int) → inetReturns val evaluated at the row that is n rows before the current row within its partition; if there is no such row, instead returns null. n is evaluated with respect to the current row.
+
+lag(val: inet, n: int, default: inet) → inetReturns val evaluated at the row that is n rows before the current row within its partition; if there is no such, row, instead returns default (which must be of the same type as val). Both n and default are evaluated with respect to the current row.
+
+lag(val: int) → intReturns val evaluated at the previous row within current row’s partition; if there is no such row, instead returns null.
+
+lag(val: int, n: int) → intReturns val evaluated at the row that is n rows before the current row within its partition; if there is no such row, instead returns null. n is evaluated with respect to the current row.
+
+lag(val: int, n: int, default: int) → intReturns val evaluated at the row that is n rows before the current row within its partition; if there is no such, row, instead returns default (which must be of the same type as val). Both n and default are evaluated with respect to the current row.
+
+lag(val: interval) → intervalReturns val evaluated at the previous row within current row’s partition; if there is no such row, instead returns null.
+
+lag(val: interval, n: int) → intervalReturns val evaluated at the row that is n rows before the current row within its partition; if there is no such row, instead returns null. n is evaluated with respect to the current row.
+
+lag(val: interval, n: int, default: interval) → intervalReturns val evaluated at the row that is n rows before the current row within its partition; if there is no such, row, instead returns default (which must be of the same type as val). Both n and default are evaluated with respect to the current row.
+
+lag(val: string) → stringReturns val evaluated at the previous row within current row’s partition; if there is no such row, instead returns null.
+
+lag(val: string, n: int) → stringReturns val evaluated at the row that is n rows before the current row within its partition; if there is no such row, instead returns null. n is evaluated with respect to the current row.
+
+lag(val: string, n: int, default: string) → stringReturns val evaluated at the row that is n rows before the current row within its partition; if there is no such, row, instead returns default (which must be of the same type as val). Both n and default are evaluated with respect to the current row.
+
+lag(val: time) → timeReturns val evaluated at the previous row within current row’s partition; if there is no such row, instead returns null.
+
+lag(val: time, n: int) → timeReturns val evaluated at the row that is n rows before the current row within its partition; if there is no such row, instead returns null. n is evaluated with respect to the current row.
+
+lag(val: time, n: int, default: time) → timeReturns val evaluated at the row that is n rows before the current row within its partition; if there is no such, row, instead returns default (which must be of the same type as val). Both n and default are evaluated with respect to the current row.
+
+lag(val: timestamp) → timestampReturns val evaluated at the previous row within current row’s partition; if there is no such row, instead returns null.
+
+lag(val: timestamp, n: int) → timestampReturns val evaluated at the row that is n rows before the current row within its partition; if there is no such row, instead returns null. n is evaluated with respect to the current row.
+
+lag(val: timestamp, n: int, default: timestamp) → timestampReturns val evaluated at the row that is n rows before the current row within its partition; if there is no such, row, instead returns default (which must be of the same type as val). Both n and default are evaluated with respect to the current row.
+
+lag(val: timestamptz) → timestamptzReturns val evaluated at the previous row within current row’s partition; if there is no such row, instead returns null.
+
+lag(val: timestamptz, n: int) → timestamptzReturns val evaluated at the row that is n rows before the current row within its partition; if there is no such row, instead returns null. n is evaluated with respect to the current row.
+
+lag(val: timestamptz, n: int, default: timestamptz) → timestamptzReturns val evaluated at the row that is n rows before the current row within its partition; if there is no such, row, instead returns default (which must be of the same type as val). Both n and default are evaluated with respect to the current row.
+
+lag(val: uuid) → uuidReturns val evaluated at the previous row within current row’s partition; if there is no such row, instead returns null.
+
+lag(val: uuid, n: int) → uuidReturns val evaluated at the row that is n rows before the current row within its partition; if there is no such row, instead returns null. n is evaluated with respect to the current row.
+
+lag(val: uuid, n: int, default: uuid) → uuidReturns val evaluated at the row that is n rows before the current row within its partition; if there is no such, row, instead returns default (which must be of the same type as val). Both n and default are evaluated with respect to the current row.
+
+lag(val: jsonb) → jsonbReturns val evaluated at the previous row within current row’s partition; if there is no such row, instead returns null.
+
+lag(val: jsonb, n: int) → jsonbReturns val evaluated at the row that is n rows before the current row within its partition; if there is no such row, instead returns null. n is evaluated with respect to the current row.
+
+lag(val: jsonb, n: int, default: jsonb) → jsonbReturns val evaluated at the row that is n rows before the current row within its partition; if there is no such, row, instead returns default (which must be of the same type as val). Both n and default are evaluated with respect to the current row.
+
+lag(val: oid) → oidReturns val evaluated at the previous row within current row’s partition; if there is no such row, instead returns null.
+
+lag(val: oid, n: int) → oidReturns val evaluated at the row that is n rows before the current row within its partition; if there is no such row, instead returns null. n is evaluated with respect to the current row.
+
+lag(val: oid, n: int, default: oid) → oidReturns val evaluated at the row that is n rows before the current row within its partition; if there is no such, row, instead returns default (which must be of the same type as val). Both n and default are evaluated with respect to the current row.
+
+lag(val: varbit) → varbitReturns val evaluated at the previous row within current row’s partition; if there is no such row, instead returns null.
+
+lag(val: varbit, n: int) → varbitReturns val evaluated at the row that is n rows before the current row within its partition; if there is no such row, instead returns null. n is evaluated with respect to the current row.
+
+lag(val: varbit, n: int, default: varbit) → varbitReturns val evaluated at the row that is n rows before the current row within its partition; if there is no such, row, instead returns default (which must be of the same type as val). Both n and default are evaluated with respect to the current row.
+
+last_value(val: bool) → boolReturns val evaluated at the row that is the last row of the window frame.
+
+last_value(val: bytes) → bytesReturns val evaluated at the row that is the last row of the window frame.
+
+last_value(val: date) → dateReturns val evaluated at the row that is the last row of the window frame.
+
+last_value(val: decimal) → decimalReturns val evaluated at the row that is the last row of the window frame.
+
+last_value(val: float) → floatReturns val evaluated at the row that is the last row of the window frame.
+
+last_value(val: inet) → inetReturns val evaluated at the row that is the last row of the window frame.
+
+last_value(val: int) → intReturns val evaluated at the row that is the last row of the window frame.
+
+last_value(val: interval) → intervalReturns val evaluated at the row that is the last row of the window frame.
+
+last_value(val: string) → stringReturns val evaluated at the row that is the last row of the window frame.
+
+last_value(val: time) → timeReturns val evaluated at the row that is the last row of the window frame.
+
+last_value(val: timestamp) → timestampReturns val evaluated at the row that is the last row of the window frame.
+
+last_value(val: timestamptz) → timestamptzReturns val evaluated at the row that is the last row of the window frame.
+
+last_value(val: uuid) → uuidReturns val evaluated at the row that is the last row of the window frame.
+
+last_value(val: jsonb) → jsonbReturns val evaluated at the row that is the last row of the window frame.
+
+last_value(val: oid) → oidReturns val evaluated at the row that is the last row of the window frame.
+
+last_value(val: varbit) → varbitReturns val evaluated at the row that is the last row of the window frame.
+
+lead(val: bool) → boolReturns val evaluated at the following row within current row’s partition; if there is no such row, instead returns null.
+
+lead(val: bool, n: int) → boolReturns val evaluated at the row that is n rows after the current row within its partition; if there is no such row, instead returns null. n is evaluated with respect to the current row.
+
+lead(val: bool, n: int, default: bool) → boolReturns val evaluated at the row that is n rows after the current row within its partition; if there is no such, row, instead returns default (which must be of the same type as val). Both n and default are evaluated with respect to the current row.
+
+lead(val: bytes) → bytesReturns val evaluated at the following row within current row’s partition; if there is no such row, instead returns null.
+
+lead(val: bytes, n: int) → bytesReturns val evaluated at the row that is n rows after the current row within its partition; if there is no such row, instead returns null. n is evaluated with respect to the current row.
+
+lead(val: bytes, n: int, default: bytes) → bytesReturns val evaluated at the row that is n rows after the current row within its partition; if there is no such, row, instead returns default (which must be of the same type as val). Both n and default are evaluated with respect to the current row.
+
+lead(val: date) → dateReturns val evaluated at the following row within current row’s partition; if there is no such row, instead returns null.
+
+lead(val: date, n: int) → dateReturns val evaluated at the row that is n rows after the current row within its partition; if there is no such row, instead returns null. n is evaluated with respect to the current row.
+
+lead(val: date, n: int, default: date) → dateReturns val evaluated at the row that is n rows after the current row within its partition; if there is no such, row, instead returns default (which must be of the same type as val). Both n and default are evaluated with respect to the current row.
+
+lead(val: decimal) → decimalReturns val evaluated at the following row within current row’s partition; if there is no such row, instead returns null.
+
+lead(val: decimal, n: int) → decimalReturns val evaluated at the row that is n rows after the current row within its partition; if there is no such row, instead returns null. n is evaluated with respect to the current row.
+
+lead(val: decimal, n: int, default: decimal) → decimalReturns val evaluated at the row that is n rows after the current row within its partition; if there is no such, row, instead returns default (which must be of the same type as val). Both n and default are evaluated with respect to the current row.
+
+lead(val: float) → floatReturns val evaluated at the following row within current row’s partition; if there is no such row, instead returns null.
+
+lead(val: float, n: int) → floatReturns val evaluated at the row that is n rows after the current row within its partition; if there is no such row, instead returns null. n is evaluated with respect to the current row.
+
+lead(val: float, n: int, default: float) → floatReturns val evaluated at the row that is n rows after the current row within its partition; if there is no such, row, instead returns default (which must be of the same type as val). Both n and default are evaluated with respect to the current row.
+
+lead(val: inet) → inetReturns val evaluated at the following row within current row’s partition; if there is no such row, instead returns null.
+
+lead(val: inet, n: int) → inetReturns val evaluated at the row that is n rows after the current row within its partition; if there is no such row, instead returns null. n is evaluated with respect to the current row.
+
+lead(val: inet, n: int, default: inet) → inetReturns val evaluated at the row that is n rows after the current row within its partition; if there is no such, row, instead returns default (which must be of the same type as val). Both n and default are evaluated with respect to the current row.
+
+lead(val: int) → intReturns val evaluated at the following row within current row’s partition; if there is no such row, instead returns null.
+
+lead(val: int, n: int) → intReturns val evaluated at the row that is n rows after the current row within its partition; if there is no such row, instead returns null. n is evaluated with respect to the current row.
+
+lead(val: int, n: int, default: int) → intReturns val evaluated at the row that is n rows after the current row within its partition; if there is no such, row, instead returns default (which must be of the same type as val). Both n and default are evaluated with respect to the current row.
+
+lead(val: interval) → intervalReturns val evaluated at the following row within current row’s partition; if there is no such row, instead returns null.
+
+lead(val: interval, n: int) → intervalReturns val evaluated at the row that is n rows after the current row within its partition; if there is no such row, instead returns null. n is evaluated with respect to the current row.
+
+lead(val: interval, n: int, default: interval) → intervalReturns val evaluated at the row that is n rows after the current row within its partition; if there is no such, row, instead returns default (which must be of the same type as val). Both n and default are evaluated with respect to the current row.
+
+lead(val: string) → stringReturns val evaluated at the following row within current row’s partition; if there is no such row, instead returns null.
+
+lead(val: string, n: int) → stringReturns val evaluated at the row that is n rows after the current row within its partition; if there is no such row, instead returns null. n is evaluated with respect to the current row.
+
+lead(val: string, n: int, default: string) → stringReturns val evaluated at the row that is n rows after the current row within its partition; if there is no such, row, instead returns default (which must be of the same type as val). Both n and default are evaluated with respect to the current row.
+
+lead(val: time) → timeReturns val evaluated at the following row within current row’s partition; if there is no such row, instead returns null.
+
+lead(val: time, n: int) → timeReturns val evaluated at the row that is n rows after the current row within its partition; if there is no such row, instead returns null. n is evaluated with respect to the current row.
+
+lead(val: time, n: int, default: time) → timeReturns val evaluated at the row that is n rows after the current row within its partition; if there is no such, row, instead returns default (which must be of the same type as val). Both n and default are evaluated with respect to the current row.
+
+lead(val: timestamp) → timestampReturns val evaluated at the following row within current row’s partition; if there is no such row, instead returns null.
+
+lead(val: timestamp, n: int) → timestampReturns val evaluated at the row that is n rows after the current row within its partition; if there is no such row, instead returns null. n is evaluated with respect to the current row.
+
+lead(val: timestamp, n: int, default: timestamp) → timestampReturns val evaluated at the row that is n rows after the current row within its partition; if there is no such, row, instead returns default (which must be of the same type as val). Both n and default are evaluated with respect to the current row.
+
+lead(val: timestamptz) → timestamptzReturns val evaluated at the following row within current row’s partition; if there is no such row, instead returns null.
+
+lead(val: timestamptz, n: int) → timestamptzReturns val evaluated at the row that is n rows after the current row within its partition; if there is no such row, instead returns null. n is evaluated with respect to the current row.
+
+lead(val: timestamptz, n: int, default: timestamptz) → timestamptzReturns val evaluated at the row that is n rows after the current row within its partition; if there is no such, row, instead returns default (which must be of the same type as val). Both n and default are evaluated with respect to the current row.
+
+lead(val: uuid) → uuidReturns val evaluated at the following row within current row’s partition; if there is no such row, instead returns null.
+
+lead(val: uuid, n: int) → uuidReturns val evaluated at the row that is n rows after the current row within its partition; if there is no such row, instead returns null. n is evaluated with respect to the current row.
+
+lead(val: uuid, n: int, default: uuid) → uuidReturns val evaluated at the row that is n rows after the current row within its partition; if there is no such, row, instead returns default (which must be of the same type as val). Both n and default are evaluated with respect to the current row.
+
+lead(val: jsonb) → jsonbReturns val evaluated at the following row within current row’s partition; if there is no such row, instead returns null.
+
+lead(val: jsonb, n: int) → jsonbReturns val evaluated at the row that is n rows after the current row within its partition; if there is no such row, instead returns null. n is evaluated with respect to the current row.
+
+lead(val: jsonb, n: int, default: jsonb) → jsonbReturns val evaluated at the row that is n rows after the current row within its partition; if there is no such, row, instead returns default (which must be of the same type as val). Both n and default are evaluated with respect to the current row.
+
+lead(val: oid) → oidReturns val evaluated at the following row within current row’s partition; if there is no such row, instead returns null.
+
+lead(val: oid, n: int) → oidReturns val evaluated at the row that is n rows after the current row within its partition; if there is no such row, instead returns null. n is evaluated with respect to the current row.
+
+lead(val: oid, n: int, default: oid) → oidReturns val evaluated at the row that is n rows after the current row within its partition; if there is no such, row, instead returns default (which must be of the same type as val). Both n and default are evaluated with respect to the current row.
+
+lead(val: varbit) → varbitReturns val evaluated at the following row within current row’s partition; if there is no such row, instead returns null.
+
+lead(val: varbit, n: int) → varbitReturns val evaluated at the row that is n rows after the current row within its partition; if there is no such row, instead returns null. n is evaluated with respect to the current row.
+
+lead(val: varbit, n: int, default: varbit) → varbitReturns val evaluated at the row that is n rows after the current row within its partition; if there is no such, row, instead returns default (which must be of the same type as val). Both n and default are evaluated with respect to the current row.
+
+nth_value(val: bool, n: int) → boolReturns val evaluated at the row that is the nth row of the window frame (counting from 1); null if no such row.
+
+nth_value(val: bytes, n: int) → bytesReturns val evaluated at the row that is the nth row of the window frame (counting from 1); null if no such row.
+
+nth_value(val: date, n: int) → dateReturns val evaluated at the row that is the nth row of the window frame (counting from 1); null if no such row.
+
+nth_value(val: decimal, n: int) → decimalReturns val evaluated at the row that is the nth row of the window frame (counting from 1); null if no such row.
+
+nth_value(val: float, n: int) → floatReturns val evaluated at the row that is the nth row of the window frame (counting from 1); null if no such row.
+
+nth_value(val: inet, n: int) → inetReturns val evaluated at the row that is the nth row of the window frame (counting from 1); null if no such row.
+
+nth_value(val: int, n: int) → intReturns val evaluated at the row that is the nth row of the window frame (counting from 1); null if no such row.
+
+nth_value(val: interval, n: int) → intervalReturns val evaluated at the row that is the nth row of the window frame (counting from 1); null if no such row.
+
+nth_value(val: string, n: int) → stringReturns val evaluated at the row that is the nth row of the window frame (counting from 1); null if no such row.
+
+nth_value(val: time, n: int) → timeReturns val evaluated at the row that is the nth row of the window frame (counting from 1); null if no such row.
+
+nth_value(val: timestamp, n: int) → timestampReturns val evaluated at the row that is the nth row of the window frame (counting from 1); null if no such row.
+
+nth_value(val: timestamptz, n: int) → timestamptzReturns val evaluated at the row that is the nth row of the window frame (counting from 1); null if no such row.
+
+nth_value(val: uuid, n: int) → uuidReturns val evaluated at the row that is the nth row of the window frame (counting from 1); null if no such row.
+
+nth_value(val: jsonb, n: int) → jsonbReturns val evaluated at the row that is the nth row of the window frame (counting from 1); null if no such row.
+
+nth_value(val: oid, n: int) → oidReturns val evaluated at the row that is the nth row of the window frame (counting from 1); null if no such row.
+
+nth_value(val: varbit, n: int) → varbitReturns val evaluated at the row that is the nth row of the window frame (counting from 1); null if no such row.
+
+ntile(n: int) → intCalculates an integer ranging from 1 to n, dividing the partition as equally as possible.
+
+percent_rank() → floatCalculates the relative rank of the current row: (rank - 1) / (total rows - 1).
+
+rank() → intCalculates the rank of the current row with gaps; same as row_number of its first peer.
+
+row_number() → intCalculates the number of the current row within its partition, counting from 1.

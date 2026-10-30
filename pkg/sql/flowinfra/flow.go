@@ -450,7 +450,7 @@ func (f *FlowBase) Cleanup(ctx context.Context) {
 // In order to cancel a flow, call f.ctxCancel() instead of this function.
 //
 // For a detailed description of the distsql query cancellation mechanism,
-// read docs/RFCS/query_cancellation.md.
+// read docs/RFCS/query_cancellation.
 func (f *FlowBase) cancel() {
 	// If the flow is local, there are no inbound streams to cancel.
 	if f.IsLocal() {

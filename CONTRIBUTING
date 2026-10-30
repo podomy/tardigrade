@@ -27,7 +27,7 @@ enterprise tree (pkg/ccl and friends) has been removed from this fork;
 the full `cockroach` binary target does not exist here. Build the OSS
 binary instead:
 
-1. Build        make buildoss   # full build needs C++ deps; see build/README.md
+1. Build        make buildoss   # full build needs C++ deps; see build/README
 2. Test         make test       # or go test on the package you touched
 3. Pick an issue or go over the code
 

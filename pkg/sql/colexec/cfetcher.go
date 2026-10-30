@@ -1169,7 +1169,7 @@ func (rf *cFetcher) getCurrentColumnFamilyID() (sqlbase.FamilyID, error) {
 	}
 	// The column family is encoded in the final bytes of the key. The last
 	// byte of the key is the length of the column family id encoding
-	// itself. See encoding.md for more details, and see MakeFamilyKey for
+	// itself. See encoding for more details, and see MakeFamilyKey for
 	// the routine that performs this encoding.
 	var id uint64
 	_, id, err := encoding.DecodeUvarintAscending(rf.machine.nextKV.Key[len(rf.machine.lastRowPrefix):])

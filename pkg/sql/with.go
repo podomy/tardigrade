@@ -23,7 +23,7 @@ import (
 )
 
 // This file contains the implementation of common table expressions. See
-// docs/RFCS/20171206_single_use_common_table_expressions.md for more details.
+// docs/RFCS/20171206_single_use_common_table_expressions for more details.
 //
 // A common table expression is essentially a binding from user-defined name to
 // to the results of a statement that returns table data. In order to allow

@@ -2286,7 +2286,7 @@ func (*placeholderAnnotationVisitor) VisitPost(expr Expr) Expr { return expr }
 //    thrown but the type will not be inferred. If the placeholder already has a
 //    type hint, that type will be kept regardless of any casts.
 //
-// See docs/RFCS/20160203_typing.md for more details on placeholder typing (in
+// See docs/RFCS/20160203_typing for more details on placeholder typing (in
 // particular section "First pass: placeholder annotations").
 //
 // The typeHints slice contains the client-provided hints and is populated with

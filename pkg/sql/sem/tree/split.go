@@ -72,7 +72,7 @@ type Relocate struct {
 	TableOrIndex TableIndexName
 	// Each row contains an array with store ids and values for the columns in the
 	// PK or index (or a prefix of the columns).
-	// See docs/RFCS/sql_split_syntax.md.
+	// See docs/RFCS/sql_split_syntax.
 	Rows          *Select
 	RelocateLease bool
 }
@@ -99,7 +99,7 @@ type Scatter struct {
 	TableOrIndex TableIndexName
 	// Optional from and to values for the columns in the PK or index (or a prefix
 	// of the columns).
-	// See docs/RFCS/sql_split_syntax.md.
+	// See docs/RFCS/sql_split_syntax.
 	From, To Exprs
 }
 

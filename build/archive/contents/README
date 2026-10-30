@@ -8,7 +8,7 @@ To build CockroachDB from this source archive:
 
      $ make build
 
-See src/github.com/podomy/tardigrade/CONTRIBUTING.md for a complete list of
+See src/github.com/podomy/tardigrade/CONTRIBUTING for a complete list of
 build requirements.
 
 To install CockroachDB as /usr/local/bin/cockroach:

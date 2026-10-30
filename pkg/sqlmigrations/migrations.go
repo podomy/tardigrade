@@ -282,7 +282,7 @@ func databaseIDs(names ...string) func(ctx context.Context, db db) ([]sqlbase.ID
 
 // migrationDescriptor describes a single migration hook that's used to modify
 // some part of the cluster state when the CockroachDB version is upgraded.
-// See docs/RFCs/cluster_upgrade_tool.md for details.
+// See docs/RFCs/cluster_upgrade_tool for details.
 type migrationDescriptor struct {
 	// name must be unique amongst all hard-coded migrations.
 	name string

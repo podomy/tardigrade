@@ -7,7 +7,7 @@
 #   kubectl create -f cockroachdb-daemonset-secure.yaml
 #
 # You will then have to approve certificate signing requests and initialize the
-# cluster as described in the parent directory's README.md file. In order for
+# cluster as described in the parent directory's README file. In order for
 # the initialization step to work, note that you will need to change the
 # address used by the cluster-init-secure.yaml file on the
 # "--host=cockroachdb-0.cockroach" line from "cockroachdb-0.cockroach" to the

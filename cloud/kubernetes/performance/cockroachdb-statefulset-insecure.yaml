@@ -13,7 +13,7 @@
 #   kubectl create -f cockroachdb-statefulset-insecure.yaml
 #
 # You will then have to initialize the cluster as described in the parent
-# directory's README.md file.
+# directory's README file.
 #
 # If you don't see any pods being created, it's possible that your cluster was
 # not able to meet the resource requests asked for, whether it was the amount

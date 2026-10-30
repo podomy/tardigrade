@@ -1128,7 +1128,7 @@ var xxx_messageInfo_AggregatorSpec_Aggregation proto.InternalMessageInfo
 //
 // Limitations: the InterleavedReaderJoiner currently supports only equality INNER joins
 // on the full interleave prefix.
-// See https://github.com/podomy/tardigrade/blob/master/docs/RFCS/20171025_interleaved_table_joins.md.
+// See https://github.com/podomy/tardigrade/blob/master/docs/RFCS/20171025_interleaved_table_joins.
 //
 // The "internal columns" of an InterleavedReaderJoiner are the
 // concatenation of left input columns and right input columns. If the left

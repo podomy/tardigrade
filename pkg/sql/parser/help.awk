@@ -17,7 +17,7 @@
 # (sql.y) into a Go map[string]HelpMessageBody suitable for building
 # messages towards clients.
 #
-# See README.md for details.
+# See README for details.
 
 # Hint, to help read awk code: remember in awk strings are 1-indexed!
 

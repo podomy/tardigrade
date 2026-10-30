@@ -10,7 +10,7 @@ ASSUME MAX_ATTEMPTS > 0
 (* all writes and mark its transaction record as committed in a single   *)
 (* round of distributed consensus. The primary source of documentation   *)
 (* on this process lives in pkg/kv/txn_interceptor_committer.go and in   *)
-(* docs/RFCS/20180324_parallel_commit.md.                                *)
+(* docs/RFCS/20180324_parallel_commit.                                *)
 (*                                                                       *)
 (* This spec is modeling a transaction attempting a parallel commit and  *)
 (* set of concurrent transactions attempting to "recover" from the       *)

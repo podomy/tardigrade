@@ -27,7 +27,7 @@ import (
 // deletes are allowed. Finally, in the delete-only state, only deletes are
 // allowed. Further details about "online schema change" can be found in:
 //
-//   docs/RFCS/20151014_online_schema_change.md
+//   docs/RFCS/20151014_online_schema_change
 //
 // Calling code must take care to use the right collection of columns or
 // indexes. Usually this should be the public collections, since most usages are

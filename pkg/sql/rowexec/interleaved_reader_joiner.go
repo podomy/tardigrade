@@ -48,7 +48,7 @@ type tableInfo struct {
 // interleavedReaderJoiner is at the start of a computation flow: it performs KV
 // operations to retrieve rows for two tables (ancestor and child), internally
 // filters the rows, performs a merge join with equality constraints.
-// See docs/RFCS/20171025_interleaved_table_joins.md
+// See docs/RFCS/20171025_interleaved_table_joins
 type interleavedReaderJoiner struct {
 	execinfra.JoinerBase
 

@@ -119,10 +119,10 @@ const (
 	// https://www.cockroachlabs.com/blog/sql-in-cockroachdb-mapping-table-data-to-key-value-storage/.
 	BaseFormatVersion
 	// FamilyFormatVersion corresponds to the encoding described in
-	// https://github.com/podomy/tardigrade/blob/master/docs/RFCS/20151214_sql_column_families.md
+	// https://github.com/podomy/tardigrade/blob/master/docs/RFCS/20151214_sql_column_families
 	FamilyFormatVersion
 	// InterleavedFormatVersion corresponds to the encoding described in
-	// https://github.com/podomy/tardigrade/blob/master/docs/RFCS/20160624_sql_interleaved_tables.md
+	// https://github.com/podomy/tardigrade/blob/master/docs/RFCS/20160624_sql_interleaved_tables
 	InterleavedFormatVersion
 )
 

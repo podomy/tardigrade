@@ -1,4 +1,4 @@
-# Grammar rules expansion - see README.md
+# Grammar rules expansion - see README
 
 /\/\/ EXTEND WITH HELP:/ {
     # some_yacc_rule_name // EXTEND WITH HELP:  BLABLA

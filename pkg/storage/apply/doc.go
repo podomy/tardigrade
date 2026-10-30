@@ -85,7 +85,7 @@ cases, the command may still be rejected (deterministically) and the client
 should be alerted of that. In more extreme cases, the result of the command may
 not even be known until it is applied to the state machine. In CockroachDB, this
 was the case until the major rework that took place in 2016 called "proposer
-evaluated KV" (see docs/RFCS/20160420_proposer_evaluated_kv.md). With the
+evaluated KV" (see docs/RFCS/20160420_proposer_evaluated_kv). With the
 completion of that change, client responses are determined before replication
 begins. The only remaining work to be done after replication of a command
 succeeds is to determine whether it will be rejected and replaced by an empty

@@ -20,10 +20,10 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/podomy/tardigrade/pkg/sql/sem/builtins"
-	"github.com/podomy/tardigrade/pkg/sql/sem/tree"
 	"github.com/golang-commonmark/markdown"
 	"github.com/pkg/errors"
+	"github.com/podomy/tardigrade/pkg/sql/sem/builtins"
+	"github.com/podomy/tardigrade/pkg/sql/sem/tree"
 	"github.com/spf13/cobra"
 )
 
@@ -44,22 +44,22 @@ func init() {
 			}
 
 			if err := ioutil.WriteFile(
-				filepath.Join(outDir, "functions.md"), generateFunctions(builtins.AllBuiltinNames, true), 0644,
+				filepath.Join(outDir, "functions"), generateFunctions(builtins.AllBuiltinNames, true), 0644,
 			); err != nil {
 				return err
 			}
 			if err := ioutil.WriteFile(
-				filepath.Join(outDir, "aggregates.md"), generateFunctions(builtins.AllAggregateBuiltinNames, false), 0644,
+				filepath.Join(outDir, "aggregates"), generateFunctions(builtins.AllAggregateBuiltinNames, false), 0644,
 			); err != nil {
 				return err
 			}
 			if err := ioutil.WriteFile(
-				filepath.Join(outDir, "window_functions.md"), generateFunctions(builtins.AllWindowBuiltinNames, false), 0644,
+				filepath.Join(outDir, "window_functions"), generateFunctions(builtins.AllWindowBuiltinNames, false), 0644,
 			); err != nil {
 				return err
 			}
 			return ioutil.WriteFile(
-				filepath.Join(outDir, "operators.md"), generateOperators(), 0644,
+				filepath.Join(outDir, "operators"), generateOperators(), 0644,
 			)
 		},
 	})

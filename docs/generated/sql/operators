@@ -1,0 +1,454 @@
+Return
+
+int # intint
+varbit # varbitvarbit
+
+
+  Return
+
+jsonb #> string[]jsonb
+
+
+    Return
+
+jsonb #>> string[]string
+
+
+%Return
+
+decimal % decimaldecimal
+decimal % intdecimal
+float % floatfloat
+int % decimaldecimal
+int % intint
+
+
+&Return
+
+inet & inetinet
+int & intint
+varbit & varbitvarbit
+
+
+&&Return
+
+anyelement && anyelementbool
+inet && inetbool
+
+
+*Return
+
+decimal * decimaldecimal
+decimal * intdecimal
+decimal * intervalinterval
+float * floatfloat
+float * intervalinterval
+int * decimaldecimal
+int * intint
+int * intervalinterval
+interval * decimalinterval
+interval * floatinterval
+interval * intinterval
+
+
++Return
+
+date + intdate
+date + intervaltimestamptz
+date + timetimestamp
+decimal + decimaldecimal
+decimal + intdecimal
+float + floatfloat
+inet + intinet
+int + datedate
+int + decimaldecimal
+int + inetinet
+int + intint
+interval + datetimestamptz
+interval + intervalinterval
+interval + timetime
+interval + timestamptimestamp
+interval + timestamptztimestamptz
+time + datetimestamp
+time + intervaltime
+timestamp + intervaltimestamp
+timestamptz + intervaltimestamptz
+
+
+-Return
+
+-decimaldecimal
+-floatfloat
+-intint
+-intervalinterval
+date - dateint
+date - intdate
+date - intervaltimestamptz
+date - timetimestamp
+decimal - decimaldecimal
+decimal - intdecimal
+float - floatfloat
+inet - inetint
+inet - intinet
+int - decimaldecimal
+int - intint
+interval - intervalinterval
+jsonb - intjsonb
+jsonb - stringjsonb
+jsonb - string[]jsonb
+time - intervaltime
+time - timeinterval
+timestamp - intervaltimestamp
+timestamp - timestampinterval
+timestamp - timestamptzinterval
+timestamptz - intervaltimestamptz
+timestamptz - timestampinterval
+timestamptz - timestamptzinterval
+
+
+->Return
+
+jsonb -> intjsonb
+jsonb -> stringjsonb
+
+
+->>Return
+
+jsonb ->> intstring
+jsonb ->> stringstring
+
+
+/Return
+
+decimal / decimaldecimal
+decimal / intdecimal
+float / floatfloat
+int / decimaldecimal
+int / intdecimal
+interval / floatinterval
+interval / intinterval
+
+
+//Return
+
+decimal // decimaldecimal
+decimal // intdecimal
+float // floatfloat
+int // decimaldecimal
+int // intint
+
+
+Return
+
+bool  boolbool
+bytes  bytesbool
+collatedstring  collatedstringbool
+date  datebool
+date  timestampbool
+date  timestamptzbool
+decimal  decimalbool
+decimal  floatbool
+decimal  intbool
+float  decimalbool
+float  floatbool
+float  intbool
+inet  inetbool
+int  decimalbool
+int  floatbool
+int  intbool
+interval  intervalbool
+oid  oidbool
+string  stringbool
+time  timebool
+timestamp  datebool
+timestamp  timestampbool
+timestamp  timestamptzbool
+timestamptz  datebool
+timestamptz  timestampbool
+timestamptz  timestamptzbool
+tuple  tuplebool
+uuid  uuidbool
+varbit  varbitbool
+
+
+Return
+
+inet  inetbool
+int  intint
+varbit  intvarbit
+
+
+Return
+
+bool  boolbool
+bytes  bytesbool
+collatedstring  collatedstringbool
+date  datebool
+date  timestampbool
+date  timestamptzbool
+decimal  decimalbool
+decimal  floatbool
+decimal  intbool
+float  decimalbool
+float  floatbool
+float  intbool
+inet  inetbool
+int  decimalbool
+int  floatbool
+int  intbool
+interval  intervalbool
+oid  oidbool
+string  stringbool
+time  timebool
+timestamp  datebool
+timestamp  timestampbool
+timestamp  timestamptzbool
+timestamptz  datebool
+timestamptz  timestampbool
+timestamptz  timestamptzbool
+tuple  tuplebool
+uuid  uuidbool
+varbit  varbitbool
+
+
+Return
+
+anyelement  anyelementbool
+jsonb  jsonbbool
+
+
+=Return
+
+bool = boolbool
+bool[] = bool[]bool
+bytes = bytesbool
+bytes[] = bytes[]bool
+collatedstring = collatedstringbool
+date = datebool
+date = timestampbool
+date = timestamptzbool
+date[] = date[]bool
+decimal = decimalbool
+decimal = floatbool
+decimal = intbool
+decimal[] = decimal[]bool
+float = decimalbool
+float = floatbool
+float = intbool
+float[] = float[]bool
+inet = inetbool
+inet[] = inet[]bool
+int = decimalbool
+int = floatbool
+int = intbool
+int[] = int[]bool
+interval = intervalbool
+interval[] = interval[]bool
+jsonb = jsonbbool
+oid = oidbool
+string = stringbool
+string[] = string[]bool
+time = timebool
+time[] = time[]bool
+timestamp = datebool
+timestamp = timestampbool
+timestamp = timestamptzbool
+timestamp[] = timestamp[]bool
+timestamptz = datebool
+timestamptz = timestampbool
+timestamptz = timestamptzbool
+timestamptz = timestamptzbool
+tuple = tuplebool
+uuid = uuidbool
+uuid[] = uuid[]bool
+varbit = varbitbool
+
+
+    Return
+
+inet >> inetbool
+int >> intint
+varbit >> intvarbit
+
+
+?Return
+
+jsonb ? stringbool
+
+
+?&Return
+
+jsonb ?& string[]bool
+
+
+?|Return
+
+jsonb ?| string[]bool
+
+
+@>Return
+
+anyelement @> anyelementbool
+jsonb @> jsonbbool
+
+
+ILIKEReturn
+
+string ILIKE stringbool
+
+
+INReturn
+
+bool IN tuplebool
+bytes IN tuplebool
+collatedstring IN tuplebool
+date IN tuplebool
+decimal IN tuplebool
+float IN tuplebool
+inet IN tuplebool
+int IN tuplebool
+interval IN tuplebool
+jsonb IN tuplebool
+oid IN tuplebool
+string IN tuplebool
+time IN tuplebool
+timestamp IN tuplebool
+timestamptz IN tuplebool
+tuple IN tuplebool
+uuid IN tuplebool
+varbit IN tuplebool
+
+
+IS NOT DISTINCT FROMReturn
+
+bool IS NOT DISTINCT FROM boolbool
+bool[] IS NOT DISTINCT FROM bool[]bool
+bytes IS NOT DISTINCT FROM bytesbool
+bytes[] IS NOT DISTINCT FROM bytes[]bool
+collatedstring IS NOT DISTINCT FROM collatedstringbool
+date IS NOT DISTINCT FROM datebool
+date IS NOT DISTINCT FROM timestampbool
+date IS NOT DISTINCT FROM timestamptzbool
+date[] IS NOT DISTINCT FROM date[]bool
+decimal IS NOT DISTINCT FROM decimalbool
+decimal IS NOT DISTINCT FROM floatbool
+decimal IS NOT DISTINCT FROM intbool
+decimal[] IS NOT DISTINCT FROM decimal[]bool
+float IS NOT DISTINCT FROM decimalbool
+float IS NOT DISTINCT FROM floatbool
+float IS NOT DISTINCT FROM intbool
+float[] IS NOT DISTINCT FROM float[]bool
+inet IS NOT DISTINCT FROM inetbool
+inet[] IS NOT DISTINCT FROM inet[]bool
+int IS NOT DISTINCT FROM decimalbool
+int IS NOT DISTINCT FROM floatbool
+int IS NOT DISTINCT FROM intbool
+int[] IS NOT DISTINCT FROM int[]bool
+interval IS NOT DISTINCT FROM intervalbool
+interval[] IS NOT DISTINCT FROM interval[]bool
+jsonb IS NOT DISTINCT FROM jsonbbool
+oid IS NOT DISTINCT FROM oidbool
+string IS NOT DISTINCT FROM stringbool
+string[] IS NOT DISTINCT FROM string[]bool
+time IS NOT DISTINCT FROM timebool
+time[] IS NOT DISTINCT FROM time[]bool
+timestamp IS NOT DISTINCT FROM datebool
+timestamp IS NOT DISTINCT FROM timestampbool
+timestamp IS NOT DISTINCT FROM timestamptzbool
+timestamp[] IS NOT DISTINCT FROM timestamp[]bool
+timestamptz IS NOT DISTINCT FROM datebool
+timestamptz IS NOT DISTINCT FROM timestampbool
+timestamptz IS NOT DISTINCT FROM timestamptzbool
+timestamptz IS NOT DISTINCT FROM timestamptzbool
+tuple IS NOT DISTINCT FROM tuplebool
+unknown IS NOT DISTINCT FROM unknownbool
+uuid IS NOT DISTINCT FROM uuidbool
+uuid[] IS NOT DISTINCT FROM uuid[]bool
+varbit IS NOT DISTINCT FROM varbitbool
+
+
+LIKEReturn
+
+string LIKE stringbool
+
+
+SIMILAR TOReturn
+
+string SIMILAR TO stringbool
+
+
+^Return
+
+decimal ^ decimaldecimal
+decimal ^ intdecimal
+float ^ floatfloat
+int ^ decimaldecimal
+int ^ intint
+
+
+|Return
+
+inet | inetinet
+int | intint
+varbit | varbitvarbit
+
+
+||Return
+
+bool || bool[]bool[]
+bool[] || boolbool[]
+bool[] || bool[]bool[]
+bytes || bytesbytes
+bytes || bytes[]bytes[]
+bytes[] || bytesbytes[]
+bytes[] || bytes[]bytes[]
+date || date[]date[]
+date[] || datedate[]
+date[] || date[]date[]
+decimal || decimal[]decimal[]
+decimal[] || decimaldecimal[]
+decimal[] || decimal[]decimal[]
+float || float[]float[]
+float[] || floatfloat[]
+float[] || float[]float[]
+inet || inet[]inet[]
+inet[] || inetinet[]
+inet[] || inet[]inet[]
+int || int[]int[]
+int[] || intint[]
+int[] || int[]int[]
+interval || interval[]interval[]
+interval[] || intervalinterval[]
+interval[] || interval[]interval[]
+jsonb || jsonbjsonb
+oid || oidoid
+string || stringstring
+string || string[]string[]
+string[] || stringstring[]
+string[] || string[]string[]
+time || time[]time[]
+time[] || timetime[]
+time[] || time[]time[]
+timestamp || timestamp[]timestamp[]
+timestamp[] || timestamptimestamp[]
+timestamp[] || timestamp[]timestamp[]
+timestamptz || timestamptztimestamptz
+timestamptz || timestamptztimestamptz
+timestamptz || timestamptztimestamptz
+uuid || uuid[]uuid[]
+uuid[] || uuiduuid[]
+uuid[] || uuid[]uuid[]
+varbit || varbitvarbit
+
+
+~Return
+
+~inetinet
+~intint
+~varbitvarbit
+string ~ stringbool
+
+
+~*Return
+
+string ~* stringbool

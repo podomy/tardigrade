@@ -177,7 +177,7 @@ CREATE TABLE system.web_sessions (
 	// number of distinct values of the column group and (optionally) a histogram if there
 	// is only one column in columnIDs.
 	//
-	// Design outlined in /docs/RFCS/20170908_sql_optimizer_statistics.md
+	// Design outlined in /docs/RFCS/20170908_sql_optimizer_statistics
 	TableStatisticsTableSchema = `
 CREATE TABLE system.table_statistics (
 	"tableID"       INT8       NOT NULL,

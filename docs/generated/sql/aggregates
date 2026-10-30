@@ -1,0 +1,155 @@
+Function → ReturnsDescription
+
+array_agg(arg1: bool) → bool[]Aggregates the selected values into an array.
+
+array_agg(arg1: bytes) → bytes[]Aggregates the selected values into an array.
+
+array_agg(arg1: date) → date[]Aggregates the selected values into an array.
+
+array_agg(arg1: decimal) → decimal[]Aggregates the selected values into an array.
+
+array_agg(arg1: float) → float[]Aggregates the selected values into an array.
+
+array_agg(arg1: inet) → inet[]Aggregates the selected values into an array.
+
+array_agg(arg1: int) → int[]Aggregates the selected values into an array.
+
+array_agg(arg1: interval) → interval[]Aggregates the selected values into an array.
+
+array_agg(arg1: string) → string[]Aggregates the selected values into an array.
+
+array_agg(arg1: time) → time[]Aggregates the selected values into an array.
+
+array_agg(arg1: timestamp) → timestamp[]Aggregates the selected values into an array.
+
+array_agg(arg1: timestamptz) → timestamptz[]Aggregates the selected values into an array.
+
+array_agg(arg1: uuid) → uuid[]Aggregates the selected values into an array.
+
+array_agg(arg1: oid) → oid[]Aggregates the selected values into an array.
+
+array_agg(arg1: varbit) → varbit[]Aggregates the selected values into an array.
+
+avg(arg1: decimal) → decimalCalculates the average of the selected values.
+
+avg(arg1: float) → floatCalculates the average of the selected values.
+
+avg(arg1: int) → decimalCalculates the average of the selected values.
+
+avg(arg1: interval) → intervalCalculates the average of the selected values.
+
+bool_and(arg1: bool) → boolCalculates the boolean value of ANDing all selected values.
+
+bool_or(arg1: bool) → boolCalculates the boolean value of ORing all selected values.
+
+concat_agg(arg1: bytes) → bytesConcatenates all selected values.
+
+concat_agg(arg1: string) → stringConcatenates all selected values.
+
+count(arg1: anyelement) → intCalculates the number of selected elements.
+
+count_rows() → intCalculates the number of rows.
+
+json_agg(arg1: anyelement) → jsonbAggregates values as a JSON or JSONB array.
+
+jsonb_agg(arg1: anyelement) → jsonbAggregates values as a JSON or JSONB array.
+
+max(arg1: bool) → boolIdentifies the maximum selected value.
+
+max(arg1: bytes) → bytesIdentifies the maximum selected value.
+
+max(arg1: date) → dateIdentifies the maximum selected value.
+
+max(arg1: decimal) → decimalIdentifies the maximum selected value.
+
+max(arg1: float) → floatIdentifies the maximum selected value.
+
+max(arg1: inet) → inetIdentifies the maximum selected value.
+
+max(arg1: int) → intIdentifies the maximum selected value.
+
+max(arg1: interval) → intervalIdentifies the maximum selected value.
+
+max(arg1: string) → stringIdentifies the maximum selected value.
+
+max(arg1: time) → timeIdentifies the maximum selected value.
+
+max(arg1: timestamp) → timestampIdentifies the maximum selected value.
+
+max(arg1: timestamptz) → timestamptzIdentifies the maximum selected value.
+
+max(arg1: uuid) → uuidIdentifies the maximum selected value.
+
+max(arg1: jsonb) → jsonbIdentifies the maximum selected value.
+
+max(arg1: oid) → oidIdentifies the maximum selected value.
+
+max(arg1: varbit) → varbitIdentifies the maximum selected value.
+
+min(arg1: bool) → boolIdentifies the minimum selected value.
+
+min(arg1: bytes) → bytesIdentifies the minimum selected value.
+
+min(arg1: date) → dateIdentifies the minimum selected value.
+
+min(arg1: decimal) → decimalIdentifies the minimum selected value.
+
+min(arg1: float) → floatIdentifies the minimum selected value.
+
+min(arg1: inet) → inetIdentifies the minimum selected value.
+
+min(arg1: int) → intIdentifies the minimum selected value.
+
+min(arg1: interval) → intervalIdentifies the minimum selected value.
+
+min(arg1: string) → stringIdentifies the minimum selected value.
+
+min(arg1: time) → timeIdentifies the minimum selected value.
+
+min(arg1: timestamp) → timestampIdentifies the minimum selected value.
+
+min(arg1: timestamptz) → timestamptzIdentifies the minimum selected value.
+
+min(arg1: uuid) → uuidIdentifies the minimum selected value.
+
+min(arg1: jsonb) → jsonbIdentifies the minimum selected value.
+
+min(arg1: oid) → oidIdentifies the minimum selected value.
+
+min(arg1: varbit) → varbitIdentifies the minimum selected value.
+
+sqrdiff(arg1: decimal) → decimalCalculates the sum of squared differences from the mean of the selected values.
+
+sqrdiff(arg1: float) → floatCalculates the sum of squared differences from the mean of the selected values.
+
+sqrdiff(arg1: int) → decimalCalculates the sum of squared differences from the mean of the selected values.
+
+stddev(arg1: decimal) → decimalCalculates the standard deviation of the selected values.
+
+stddev(arg1: float) → floatCalculates the standard deviation of the selected values.
+
+stddev(arg1: int) → decimalCalculates the standard deviation of the selected values.
+
+string_agg(arg1: bytes, arg2: bytes) → bytesConcatenates all selected values using the provided delimiter.
+
+string_agg(arg1: string, arg2: string) → stringConcatenates all selected values using the provided delimiter.
+
+sum(arg1: decimal) → decimalCalculates the sum of the selected values.
+
+sum(arg1: float) → floatCalculates the sum of the selected values.
+
+sum(arg1: int) → decimalCalculates the sum of the selected values.
+
+sum(arg1: interval) → intervalCalculates the sum of the selected values.
+
+sum_int(arg1: int) → intCalculates the sum of the selected values.
+
+variance(arg1: decimal) → decimalCalculates the variance of the selected values.
+
+variance(arg1: float) → floatCalculates the variance of the selected values.
+
+variance(arg1: int) → decimalCalculates the variance of the selected values.
+
+xor_agg(arg1: bytes) → bytesCalculates the bitwise XOR of the selected values.
+
+xor_agg(arg1: int) → intCalculates the bitwise XOR of the selected values.

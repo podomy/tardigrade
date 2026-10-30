@@ -18,7 +18,7 @@
 
 // Going to add a new statement?
 // Consider taking a look at our codelab guide to learn what is needed to add a statement.
-// https://github.com/podomy/tardigrade/blob/master/docs/codelabs/01-sql-statement.md
+// https://github.com/podomy/tardigrade/blob/master/docs/codelabs/01-sql-statement
 
 %{
 package parser

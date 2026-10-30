@@ -236,7 +236,7 @@ type ZoneConfig struct {
 	NumReplicas *int32 `protobuf:"varint,5,opt,name=num_replicas,json=numReplicas" json:"num_replicas,omitempty" yaml:"num_replicas"`
 	// Constraints constrains which stores the replicas can be stored on. The
 	// order in which the constraints are stored is arbitrary and may change.
-	// https://github.com/podomy/tardigrade/blob/master/docs/RFCS/20160706_expressive_zone_config.md#constraint-system
+	// https://github.com/podomy/tardigrade/blob/master/docs/RFCS/20160706_expressive_zone_config#constraint-system
 	//
 	// NOTE: The sum of the num_replicas fields of the Constraints must add up to
 	// ZoneConfig.num_replicas, or there must be no more than a single Constraints

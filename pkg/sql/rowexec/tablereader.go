@@ -31,7 +31,7 @@ import (
 // tableReader is the start of a computation flow; it performs KV operations to
 // retrieve rows for a table, runs a filter expression, and passes rows with the
 // desired column values to an output RowReceiver.
-// See docs/RFCS/distributed_sql.md
+// See docs/RFCS/distributed_sql
 type tableReader struct {
 	execinfra.ProcessorBase
 

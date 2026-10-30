@@ -317,7 +317,7 @@ func (s *Server) Metrics() (res []interface{}) {
 // exist.
 // The RFC on drain modes has more information regarding the specifics of
 // what will happen to connections in different states:
-// https://github.com/podomy/tardigrade/blob/master/docs/RFCS/20160425_drain_modes.md
+// https://github.com/podomy/tardigrade/blob/master/docs/RFCS/20160425_drain_modes
 //
 // The reporter callback, if non-nil, is called on a best effort basis
 // to report work that needed to be done and which may or may not have

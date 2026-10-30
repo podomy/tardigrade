@@ -1118,7 +1118,7 @@ func (a Allocator) shouldTransferLeaseUsingStats(
 // aggressive about moving the leases toward requests when latencies are high.
 //
 // The calculations below were determined via a bunch of manual testing (see
-// #13232 or the leaseholder_locality.md RFC for more details), but the general
+// #13232 or the leaseholder_locality RFC for more details), but the general
 // logic behind each part of the formula is as follows:
 //
 // * LeaseRebalancingAggressiveness: Allow the aggressiveness to be tuned via

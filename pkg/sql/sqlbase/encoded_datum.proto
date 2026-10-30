@@ -8,7 +8,7 @@
 // by the Apache License, Version 2.0, included in the file
 // licenses/APL.txt.
 //
-// Data structures for distributed SQL APIs. See docs/RFCS/distributed_sql.md.
+// Data structures for distributed SQL APIs. See docs/RFCS/distributed_sql.
 // All the concepts here are "physical plan" concepts.
 
 syntax = "proto2";

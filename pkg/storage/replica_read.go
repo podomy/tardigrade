@@ -95,7 +95,7 @@ func (r *Replica) executeReadOnlyBatch(
 
 	// A merge is (likely) about to be carried out, and this replica
 	// needs to block all traffic until the merge either commits or
-	// aborts. See docs/tech-notes/range-merges.md.
+	// aborts. See docs/tech-notes/range-merges.
 	if result.Local.DetachMaybeWatchForMerge() {
 		if err := r.maybeWatchForMerge(ctx); err != nil {
 			return nil, roachpb.NewError(err)
